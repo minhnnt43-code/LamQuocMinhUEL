@@ -1,0 +1,85 @@
+╔══════════════════════════════════════════════════════╗
+║     HƯỚNG DẪN SỬ DỤNG TRANG QUẢN LÝ CÁ NHÂN         ║
+╚══════════════════════════════════════════════════════╝
+
+📌 CÁCH MỞ TRANG WEB:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Tìm file "index.html" trong thư mục
+2. Nhấp đúp vào file đó
+3. Trang web sẽ tự động mở trong trình duyệt
+4. Hoặc kéo thả file vào trình duyệt Chrome/Edge/Firefox
+
+🎯 CÁC TÍNH NĂNG CHÍNH:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 1. QUẢN LÝ CÔNG VIỆC
+   - Nhập công việc → Nhấn "Thêm"
+   - Nhấn "✓ Hoàn thành" khi làm xong
+   - Nhấn "🗑️ Xóa" để xóa công việc
+
+💾 2. QUẢN LÝ DỮ LIỆU
+   - Nhập tiêu đề và nội dung
+   - Nhấn "Lưu Dữ Liệu"
+   - Dữ liệu hiện dạng thẻ, dễ xem
+   - Xóa khi không cần nữa
+
+💰 3. QUẢN LÝ TÀI CHÍNH
+   - Chọn "Thu Nhập" hoặc "Chi Tiêu"
+   - Nhập mô tả (VD: "Lương tháng 10")
+   - Nhập số tiền
+   - Nhấn "Thêm"
+   - Xem tổng thu/chi ở trên cùng
+
+🏆 4. QUẢN LÝ THÀNH TÍCH
+   - Nhập tên thành tích
+   - Chọn ngày đạt được
+   - Nhập mô tả (nếu muốn)
+   - Nhấn "Thêm Thành Tích"
+
+💡 LƯU Ý QUAN TRỌNG:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Mọi dữ liệu TỰ ĐỘNG LƯU trên máy tính của bạn
+✓ Không cần Internet sau khi mở lần đầu
+✓ Không cần đăng nhập
+✓ Dữ liệu RIÊNG TƯ, chỉ bạn mới thấy
+✗ KHÔNG XÓA dữ liệu trình duyệt (sẽ mất hết thông tin)
+
+📱 DÙNG TRÊN ĐIỆN THOẠI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Chuyển thư mục vào điện thoại
+2. Mở file "index.html" bằng trình duyệt
+3. Sử dụng bình thường như trên máy tính
+
+🔧 KHI GẶP LỖI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Làm mới trang (nhấn F5)
+2. Đóng và mở lại trình duyệt
+3. Thử trình duyệt khác (Chrome, Edge, Firefox)
+4. Kiểm tra đã mở đúng file "index.html" chưa
+
+🎨 GIAO DIỆN MỚI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Màu xanh biển chuyên nghiệp
+- Font chữ UTM Avo (hoặc font backup)
+- Hiệu ứng gradient mượt mà
+- Thiết kế cao cấp, sang trọng
+
+📝 CÀI FONT UTM AVO (TÙY CHỌN):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Xem file "HUONG_DAN_FONT_UTM_AVO.txt"
+- Nếu không cài font, vẫn dùng được bình thường!
+
+📦 CẤU TRÚC FILE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+index.html                  → File chính, mở file này
+style.css                   → Màu sắc và giao diện
+fonts.css                   → Cài đặt font chữ
+script.js                   → Chức năng tương tác
+README.md                   → Hướng dẫn chi tiết
+HUONG_DAN_SU_DUNG.txt      → File này
+HUONG_DAN_FONT_UTM_AVO.txt → Hướng dẫn cài font
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 CHÚC BẠN SỬ DỤNG VUI VẺ VÀ HIỆU QUẢ! 🎉
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+

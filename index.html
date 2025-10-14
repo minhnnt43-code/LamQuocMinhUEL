@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Lý Cá Nhân</title>
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>🌟 Trang Quản Lý Cá Nhân</h1>
+            <p class="subtitle">Quản lý mọi thứ một cách dễ dàng</p>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <div class="container">
+            <button class="nav-btn active" onclick="showSection('work')">
+                📋 Quản Lý Công Việc
+            </button>
+            <button class="nav-btn" onclick="showSection('data')">
+                💾 Quản Lý Dữ Liệu
+            </button>
+            <button class="nav-btn" onclick="showSection('finance')">
+                💰 Quản Lý Tài Chính
+            </button>
+            <button class="nav-btn" onclick="showSection('achievement')">
+                🏆 Quản Lý Thành Tích
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Quản Lý Công Việc -->
+        <section id="work" class="content-section active">
+            <h2>📋 Quản Lý Công Việc</h2>
+            <div class="input-group">
+                <input type="text" id="workInput" placeholder="Nhập công việc mới...">
+                <button onclick="addWork()" class="btn-primary">Thêm</button>
+            </div>
+            <ul id="workList" class="item-list"></ul>
+        </section>
+
+        <!-- Quản Lý Dữ Liệu -->
+        <section id="data" class="content-section">
+            <h2>💾 Quản Lý Dữ Liệu</h2>
+            <div class="input-group">
+                <input type="text" id="dataTitle" placeholder="Tiêu đề...">
+                <input type="text" id="dataContent" placeholder="Nội dung...">
+                <button onclick="addData()" class="btn-primary">Lưu Dữ Liệu</button>
+            </div>
+            <div id="dataList" class="card-list"></div>
+        </section>
+
+        <!-- Quản Lý Tài Chính -->
+        <section id="finance" class="content-section">
+            <h2>💰 Quản Lý Tài Chánh</h2>
+            
+            <div class="finance-summary">
+                <div class="summary-card income">
+                    <h3>Thu Nhập</h3>
+                    <p class="amount" id="totalIncome">0 đ</p>
+                </div>
+                <div class="summary-card expense">
+                    <h3>Chi Tiêu</h3>
+                    <p class="amount" id="totalExpense">0 đ</p>
+                </div>
+                <div class="summary-card balance">
+                    <h3>Còn Lại</h3>
+                    <p class="amount" id="balance">0 đ</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <select id="financeType">
+                    <option value="income">Thu Nhập</option>
+                    <option value="expense">Chi Tiêu</option>
+                </select>
+                <input type="text" id="financeDesc" placeholder="Mô tả...">
+                <input type="number" id="financeAmount" placeholder="Số tiền...">
+                <button onclick="addFinance()" class="btn-primary">Thêm</button>
+            </div>
+            <ul id="financeList" class="item-list"></ul>
+        </section>
+
+        <!-- Quản Lý Thành Tích -->
+        <section id="achievement" class="content-section">
+            <h2>🏆 Quản Lý Thành Tích</h2>
+            <div class="input-group">
+                <input type="text" id="achievementTitle" placeholder="Tên thành tích...">
+                <input type="date" id="achievementDate">
+                <input type="text" id="achievementDesc" placeholder="Mô tả...">
+                <button onclick="addAchievement()" class="btn-primary">Thêm Thành Tích</button>
+            </div>
+            <div id="achievementList" class="card-list"></div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2025 - Trang Quản Lý Cá Nhân | Làm với ❤️</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

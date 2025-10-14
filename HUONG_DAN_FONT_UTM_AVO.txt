@@ -1,0 +1,85 @@
+╔══════════════════════════════════════════════════════╗
+║        HƯỚNG DẪN CÀI ĐẶT FONT UTM AVO                ║
+╚══════════════════════════════════════════════════════╝
+
+📌 QUAN TRỌNG:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Trang web hiện đã được thiết kế để sử dụng font UTM Avo.
+Nếu bạn CHƯA CÓ file font, trang web sẽ tự động dùng 
+font backup (Segoe UI, Arial) - vẫn đẹp bình thường!
+
+🔧 CÁCH 1: SỬ DỤNG FONT BACKUP (KHUYÊN DÙNG)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Không cần làm gì cả!
+✓ Font backup đã được cài sẵn (Segoe UI, Arial)
+✓ Trang web vẫn đẹp và chuyên nghiệp
+
+🎯 CÁCH 2: CÀI ĐẶT FONT UTM AVO (TÙY CHỌN)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Bước 1: TẢI FONT UTM AVO
+   - Tải font UTM Avo từ internet
+   - Các file cần có:
+     * UTM-Avo.ttf (hoặc .woff, .woff2)
+     * UTM-Avo-Bold.ttf (nếu có)
+
+Bước 2: TẠO THU MỤC FONTS
+   - Trong thư mục lqmmm, tạo thư mục mới tên "fonts"
+   - Sao chép file font vào thư mục này
+
+Bước 3: MỞ FILE fonts.css
+   - Tìm dòng bắt đầu bằng /* và kết thúc bằng */
+   - XÓA dấu /* ở đầu và */ ở cuối để uncomment
+   - Điều chỉnh tên file nếu cần
+
+Ví dụ, THAY ĐỔI TỪ:
+/*
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('fonts/UTM-Avo.ttf') format('truetype');
+}
+*/
+
+THÀNH:
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('fonts/UTM-Avo.ttf') format('truetype');
+}
+
+Bước 4: LƯU FILE VÀ TẢI LẠI TRANG WEB
+   - Lưu file fonts.css
+   - Nhấn F5 để tải lại trang
+   - Font UTM Avo sẽ hiển thị!
+
+📂 CẤU TRÚC THƯ MỤC SAU KHI CÀI FONT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+lqmmm/
+├── fonts/                  ← Tạo thư mục này
+│   ├── UTM-Avo.ttf        ← Đặt file font vào đây
+│   └── UTM-Avo-Bold.ttf   ← (Tùy chọn)
+├── fonts.css               ← Sửa file này
+├── index.html
+├── style.css
+├── script.js
+└── README.md
+
+💡 LƯU Ý:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Nếu không có font UTM Avo, KHÔNG CẦN LÀM GÌ
+✓ Trang web vẫn hoạt động bình thường với font backup
+✓ Font backup cũng rất đẹp và chuyên nghiệp
+
+❓ KIỂM TRA FONT ĐÃ ÁP DỤNG CHƯA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Mở trang web trong trình duyệt
+2. Nhấn F12 (Developer Tools)
+3. Chọn tab "Elements" hoặc "Inspect"
+4. Chọn bất kỳ chữ nào trên trang
+5. Xem phần "Computed" → "font-family"
+6. Nếu thấy "UTM Avo" = thành công!
+7. Nếu thấy "Segoe UI" = đang dùng backup (vẫn OK!)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 CHÚC BẠN SỬ DỤNG VUI VẺ! 🎉
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+

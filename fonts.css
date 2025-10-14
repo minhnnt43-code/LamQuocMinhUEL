@@ -1,0 +1,24 @@
+/* Font UTM Avo - Nếu bạn có file font, uncomment và điều chỉnh đường dẫn */
+/*
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('fonts/UTM-Avo.ttf') format('truetype'),
+         url('fonts/UTM-Avo.woff') format('woff'),
+         url('fonts/UTM-Avo.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('fonts/UTM-Avo-Bold.ttf') format('truetype'),
+         url('fonts/UTM-Avo-Bold.woff') format('woff'),
+         url('fonts/UTM-Avo-Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+*/
+
+/* Backup fonts nếu chưa có file UTM Avo */
+/* Bạn có thể tải font UTM Avo và đặt vào thư mục 'fonts', sau đó uncomment phần trên */
+
