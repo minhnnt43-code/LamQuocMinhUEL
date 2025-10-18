@@ -13,7 +13,6 @@
     <!-- Toàn bộ CSS của trang web được đặt trong thẻ <style> này -->
     <style>
         /* --- BIẾN MÀU VÀ FONT CHỮ --- */
-        /* Việc dùng biến giúp dễ dàng thay đổi màu sắc toàn bộ trang web sau này */
         :root {
             --primary-blue: #005B96;
             --primary-orange: #FF7A00;
@@ -26,6 +25,10 @@
             --success-color: #28a745;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
+            --gemini-blue: #4285F4;
+            --gemini-red: #EA4335;
+            --gemini-yellow: #FBBC05;
+            --gemini-green: #34A853;
             --font-title: 'Montserrat', sans-serif;
             --font-body: 'UTM Avo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
@@ -42,8 +45,53 @@
             background-color: var(--light-gray);
             color: var(--text-color);
             line-height: 1.6;
-            display: flex;
             transition: background-color 0.3s;
+        }
+
+        /* --- GIAO DIỆN ĐĂNG NHẬP --- */
+        #login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-blue), #003f6b);
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .login-box h2 {
+            font-family: var(--font-title);
+            color: var(--primary-blue);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .login-box .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        #login-error {
+            color: var(--danger-color);
+            margin-bottom: 1rem;
+            font-weight: bold;
+            display: none; /* Mặc định ẩn */
+        }
+
+        /* --- CONTAINER CHÍNH CỦA ỨNG DỤNG --- */
+        #app-container {
+            display: none; /* Mặc định ẩn, chỉ hiện sau khi đăng nhập */
+            width: 100%;
+            display: flex;
         }
 
         /* --- THANH ĐIỀU HƯỚNG BÊN TRÁI (SIDEBAR) --- */
@@ -104,7 +152,7 @@
             font-weight: bold;
         }
         
-        .backup-section button {
+        .sidebar-footer button {
             width: 100%;
             margin-top: 0.5rem;
             padding: 0.8rem;
@@ -113,25 +161,25 @@
             font-size: 0.9rem;
             font-weight: bold;
             transition: all 0.3s;
-            border: 2px solid var(--white);
         }
 
-        .backup-btn {
+        .export-btn {
             background-color: var(--success-color);
             color: var(--white);
-            border-color: var(--success-color);
+            border: 2px solid var(--success-color);
         }
-        .backup-btn:hover {
+        .export-btn:hover {
             background-color: #218838;
         }
         
-        .restore-btn {
-            background-color: var(--warning-color);
-            color: var(--text-color);
-            border-color: var(--warning-color);
+        .logout-btn {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
         }
-        .restore-btn:hover {
-            background-color: #e0a800;
+        .logout-btn:hover {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
         }
 
         /* --- VÙNG NỘI DUNG CHÍNH --- */
@@ -178,11 +226,23 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
+            align-items: end; /* Căn các item ở dưới cùng */
         }
         
         .form-group {
             display: flex;
             flex-direction: column;
+        }
+        
+        .input-with-gemini {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .input-with-gemini .form-group {
+            flex-grow: 1;
         }
 
         .form-group label {
@@ -213,7 +273,7 @@
         }
         
         .btn-submit {
-            grid-column: 1 / -1; /* Nút chiếm toàn bộ chiều rộng grid */
+            grid-column: 1 / -1;
             padding: 0.9rem;
             font-size: 1.1rem;
             font-weight: bold;
@@ -225,10 +285,27 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
         }
-
+        
         .btn-submit:hover {
             background-color: #e66a00;
             transform: translateY(-2px);
+        }
+
+        .gemini-btn {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--gemini-blue), var(--gemini-green), var(--gemini-yellow), var(--gemini-red));
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+        .gemini-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         /* --- DANH SÁCH HIỂN THỊ CÔNG VIỆC/MỤC TIÊU --- */
@@ -262,7 +339,7 @@
             font-size: 1.4rem;
             font-weight: bold;
             color: var(--primary-blue);
-            word-break: break-word; /* Chống vỡ layout khi tên quá dài */
+            word-break: break-word;
         }
         
         .item-header.completed h3 {
@@ -316,9 +393,8 @@
         .item-actions .delete-btn:hover { background-color: var(--danger-color); border-color: var(--danger-color); color: var(--white); }
         .item-actions .complete-btn:hover { background-color: var(--success-color); border-color: var(--success-color); color: var(--white); }
 
-        /* --- CÁC NÚT BỔ SUNG --- */
         .export-report-btn {
-            display: none; /* Mặc định ẩn */
+            display: none;
             padding: 0.8rem 1.5rem;
             background-color: #007bff;
             color: var(--white);
@@ -334,15 +410,12 @@
             background-color: #0069d9;
         }
         
-        /* --- MODAL CHỈNH SỬA --- */
         .modal {
             display: none;
             position: fixed;
             z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
             overflow: auto;
             background-color: rgba(0,0,0,0.5);
             animation: fadeIn 0.3s;
@@ -362,223 +435,290 @@
         .close-btn {
             color: #aaa;
             position: absolute;
-            top: 15px;
-            right: 25px;
+            top: 15px; right: 25px;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
         }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: black;
+        .close-btn:hover, .close-btn:focus { color: black; }
+        
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
         }
+
+        .loader {
+            border: 8px solid var(--light-gray);
+            border-top: 8px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         
         /* --- GIAO DIỆN TRÊN ĐIỆN THOẠI (RESPONSIVE) --- */
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
+            #app-container { flex-direction: column; }
             .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                flex-direction: row;
-                align-items: center;
-                padding: 1rem;
-                flex-wrap: wrap; /* Cho phép các nút xuống hàng */
+                width: 100%; height: auto;
+                position: relative; flex-direction: row;
+                align-items: center; padding: 1rem;
+                flex-wrap: wrap;
             }
-            .sidebar-header {
-                width: 100%;
-                margin-bottom: 1rem;
-                font-size: 1.2rem;
-            }
-            .nav-menu {
-                display: flex;
-                flex-grow: 1;
-                margin-bottom: 0;
-            }
-            .backup-section {
-                display: flex;
-                gap: 0.5rem;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 1rem;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            .form-grid {
-                grid-template-columns: 1fr; /* 1 cột trên điện thoại */
-            }
-            .item-header, .item-body {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-            .item-actions {
-                margin-top: 1rem;
-                width: 100%;
-                display: flex;
-                justify-content: flex-end;
-            }
+            .sidebar-header { width: 100%; margin-bottom: 1rem; font-size: 1.2rem; }
+            .nav-menu { display: flex; flex-grow: 1; margin-bottom: 0; }
+            .sidebar-footer { display: flex; gap: 0.5rem; }
+            .main-content { margin-left: 0; width: 100%; padding: 1rem; }
+            h1 { font-size: 2rem; }
+            .form-grid, .input-with-gemini { grid-template-columns: 1fr; flex-direction: column; align-items: stretch; }
+            .gemini-btn { width: 100%; margin-top: 0.5rem; }
+            .item-header, .item-body { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .item-actions { margin-top: 1rem; width: 100%; display: flex; justify-content: flex-end; }
         }
     </style>
 </head>
 <body>
 
-    <!-- PHẦN 1: THANH ĐIỀU HƯỚNG (SIDEBAR) -->
-    <aside class="sidebar">
-        <h2 class="sidebar-header">Bảng Điều Khiển</h2>
-        <ul class="nav-menu">
-            <li><button class="nav-btn active" onclick="showSection('tasks')">Quản lý công việc</button></li>
-            <li><button class="nav-btn" onclick="showSection('goals')">Quản lý mục tiêu</button></li>
-        </ul>
-        <div class="backup-section">
-            <button class="backup-btn" onclick="backupData()">Sao lưu dữ liệu</button>
-            <button class="restore-btn" onclick="document.getElementById('restore-input').click()">Phục hồi dữ liệu</button>
-            <!-- Input ẩn để chọn file phục hồi -->
-            <input type="file" id="restore-input" style="display: none;" accept=".json" onchange="restoreData(event)">
-        </div>
-    </aside>
-
-    <!-- PHẦN 2: NỘI DUNG CHÍNH -->
-    <main class="main-content">
-
-        <!-- MỤC 2.1: QUẢN LÝ CÔNG VIỆC -->
-        <section id="tasks" class="content-section active">
-            <h1>Quản lý công việc</h1>
-            <div class="form-container">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="task-name">Tên công việc</label>
-                        <input type="text" id="task-name" placeholder="Ví dụ: Hoàn thành báo cáo tháng">
-                    </div>
-                    <div class="form-group">
-                        <label for="task-timeframe">Thời hạn</label>
-                        <select id="task-timeframe">
-                            <option value="Ngày">Ngày</option>
-                            <option value="Tuần">Tuần</option>
-                            <option value="Tháng">Tháng</option>
-                            <option value="Quý">Quý</option>
-                            <option value="Năm">Năm</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="task-status">Tiến độ</label>
-                        <select id="task-status">
-                            <option value="Chưa thực hiện">Chưa thực hiện</option>
-                            <option value="Đang thực hiện">Đang thực hiện</option>
-                            <option value="Đã hoàn thành">Đã hoàn thành</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="task-link">Link tài liệu</label>
-                        <input type="text" id="task-link" placeholder="https://...">
-                    </div>
-                </div>
-                <button class="btn-submit" onclick="addTask()">Thêm công việc</button>
+    <!-- GIAO DIỆN ĐĂNG NHẬP -->
+    <div id="login-container">
+        <div class="login-box">
+            <h2>Đăng Nhập</h2>
+            <p id="login-error">Tên đăng nhập hoặc mật khẩu không đúng!</p>
+            <div class="form-group">
+                <label for="username">Tên đăng nhập</label>
+                <input type="text" id="username" value="lamquocminh">
             </div>
-            
-            <button class="export-report-btn" onclick="exportWeeklyReport()">Xuất Báo Cáo Tuần</button>
-            
-            <div class="list-container" id="task-list">
-                <!-- Danh sách công việc sẽ được hiển thị ở đây bằng JavaScript -->
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" value="lamquocminh">
             </div>
-        </section>
-
-        <!-- MỤC 2.2: QUẢN LÝ MỤC TIÊU -->
-        <section id="goals" class="content-section">
-            <h1>Quản lý mục tiêu</h1>
-            <div class="form-container">
-                <div class="form-grid">
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="goal-name">Mục tiêu</label>
-                        <input type="text" id="goal-name" placeholder="Ví dụ: Đọc xong 5 quyển sách kỹ năng">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="goal-conditions">Việc cần làm để đạt được</label>
-                        <textarea id="goal-conditions" placeholder="Gạch đầu dòng các việc cần làm..."></textarea>
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="goal-link">Link đính kèm</label>
-                        <input type="text" id="goal-link" placeholder="https://...">
-                    </div>
-                </div>
-                <button class="btn-submit" onclick="addGoal()">Thêm mục tiêu</button>
-            </div>
-            <div class="list-container" id="goal-list">
-                <!-- Danh sách mục tiêu sẽ được hiển thị ở đây bằng JavaScript -->
-            </div>
-        </section>
-    </main>
-
-    <!-- PHẦN 3: MODAL DÙNG ĐỂ CHỈNH SỬA CÔNG VIỆC/MỤC TIÊU -->
-    <div id="edit-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2>Chỉnh sửa</h2>
-            <div id="edit-modal-body">
-                <!-- Nội dung form chỉnh sửa sẽ được chèn vào đây -->
-            </div>
+            <button class="btn-submit" onclick="handleLogin()">Đăng Nhập</button>
         </div>
     </div>
+    
+    <!-- CONTAINER CHÍNH CỦA ỨNG DỤNG -->
+    <div id="app-container">
+        <!-- PHẦN 1: THANH ĐIỀU HƯỚNG (SIDEBAR) -->
+        <aside class="sidebar">
+            <h2 class="sidebar-header">Bảng Điều Khiển</h2>
+            <ul class="nav-menu">
+                <li><button class="nav-btn active" onclick="showSection('tasks')">Quản lý công việc</button></li>
+                <li><button class="nav-btn" onclick="showSection('goals')">Quản lý mục tiêu</button></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="export-btn" onclick="exportDataToFile()">Xuất Dữ Liệu Ra File</button>
+                <button class="logout-btn" onclick="handleLogout()">Đăng xuất</button>
+            </div>
+        </aside>
 
+        <!-- PHẦN 2: NỘI DUNG CHÍNH -->
+        <main class="main-content">
+            <!-- CÁC SECTION KHÁC GIỮ NGUYÊN -->
+            <!-- MỤC 2.1: QUẢN LÝ CÔNG VIỆC -->
+            <section id="tasks" class="content-section active">
+                <h1>Quản lý công việc</h1>
+                <div class="form-container">
+                    <div class="form-grid">
+                        <div class="input-with-gemini">
+                            <div class="form-group">
+                                <label for="task-name">Tên công việc</label>
+                                <input type="text" id="task-name" placeholder="Nhập công việc lớn rồi nhấn nút ✨">
+                            </div>
+                            <button class="gemini-btn" onclick="suggestSubTasks()">✨ Chia nhỏ</button>
+                        </div>
+                        <div class="form-group"><label for="task-timeframe">Thời hạn</label><select id="task-timeframe"><option value="Ngày">Ngày</option><option value="Tuần">Tuần</option><option value="Tháng">Tháng</option><option value="Quý">Quý</option><option value="Năm">Năm</option></select></div>
+                        <div class="form-group"><label for="task-status">Tiến độ</label><select id="task-status"><option value="Chưa thực hiện">Chưa thực hiện</option><option value="Đang thực hiện">Đang thực hiện</option><option value="Đã hoàn thành">Đã hoàn thành</option></select></div>
+                        <div class="form-group"><label for="task-link">Link tài liệu</label><input type="text" id="task-link" placeholder="https://..."></div>
+                    </div>
+                    <button class="btn-submit" onclick="addTask()">Thêm công việc</button>
+                </div>
+                <button class="export-report-btn" onclick="exportWeeklyReport()">Xuất Báo Cáo Tuần</button>
+                <div class="list-container" id="task-list"></div>
+            </section>
+            <!-- MỤC 2.2: QUẢN LÝ MỤC TIÊU -->
+            <section id="goals" class="content-section">
+                <h1>Quản lý mục tiêu</h1>
+                <div class="form-container">
+                    <div class="form-grid">
+                        <div class="input-with-gemini">
+                            <div class="form-group"><label for="goal-name">Mục tiêu</label><input type="text" id="goal-name" placeholder="Nhập mục tiêu rồi nhấn nút ✨"></div>
+                            <button class="gemini-btn" onclick="suggestGoalSteps()">✨ Gợi ý bước</button>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;"><label for="goal-conditions">Việc cần làm để đạt được</label><textarea id="goal-conditions" placeholder="Gemini sẽ gợi ý các bước ở đây..."></textarea></div>
+                        <div class="form-group" style="grid-column: 1 / -1;"><label for="goal-link">Link đính kèm</label><input type="text" id="goal-link" placeholder="https://..."></div>
+                    </div>
+                    <button class="btn-submit" onclick="addGoal()">Thêm mục tiêu</button>
+                </div>
+                <div class="list-container" id="goal-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL VÀ SPINNER GIỮ NGUYÊN -->
+    <div id="loader-overlay" class="loader-overlay"><div class="loader"></div></div>
+    <div id="edit-modal" class="modal"><div class="modal-content"><span class="close-btn" onclick="closeModal()">&times;</span><h2>Chỉnh sửa</h2><div id="edit-modal-body"></div></div></div>
 
     <!-- PHẦN 4: TOÀN BỘ JAVASCRIPT CỦA TRANG WEB -->
     <script>
         // --- KHAI BÁO BIẾN TOÀN CỤC ---
-        // 'tasks' và 'goals' là 2 mảng chính chứa toàn bộ dữ liệu của ứng dụng
         let tasks = [];
         let goals = [];
-        // 'editingItemId' dùng để lưu ID của mục đang được chỉnh sửa
         let editingItemId = null;
+        const apiKey = "";
+
+        // --- CÁC HÀM XỬ LÝ ĐĂNG NHẬP / ĐĂNG XUẤT ---
+        
+        /**
+         * Xử lý sự kiện khi người dùng nhấn nút Đăng nhập.
+         */
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorEl = document.getElementById('login-error');
+
+            // Tài khoản và mật khẩu được hardcode theo yêu cầu
+            if (user === 'lamquocminh' && pass === 'lamquocminh') {
+                sessionStorage.setItem('isLoggedIn', 'true'); // Lưu trạng thái đăng nhập
+                showApp();
+                errorEl.style.display = 'none';
+            } else {
+                errorEl.style.display = 'block'; // Hiển thị lỗi
+            }
+        }
+        
+        /**
+         * Xử lý sự kiện khi người dùng nhấn nút Đăng xuất.
+         */
+        function handleLogout() {
+            sessionStorage.removeItem('isLoggedIn'); // Xóa trạng thái đăng nhập
+            showLoginScreen();
+        }
+
+        /**
+         * Hiển thị giao diện chính của ứng dụng và ẩn màn hình đăng nhập.
+         */
+        function showApp() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            loadData(); // Tải dữ liệu sau khi đăng nhập thành công
+            renderAll();
+        }
+
+        /**
+         * Hiển thị màn hình đăng nhập và ẩn giao diện chính.
+         */
+        function showLoginScreen() {
+            document.getElementById('login-container').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'none';
+        }
 
         // --- CÁC HÀM QUẢN LÝ GIAO DIỆN (UI) ---
 
-        /**
-         * Hàm này được dùng để chuyển đổi giữa các mục (công việc, mục tiêu).
-         * @param {string} sectionName - Tên của mục cần hiển thị ('tasks' hoặc 'goals').
-         */
         function showSection(sectionName) {
-            // 1. Ẩn tất cả các section
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-
-            // 2. Xóa trạng thái 'active' khỏi tất cả các nút điều hướng
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // 3. Hiển thị section được yêu cầu
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(sectionName).classList.add('active');
-
-            // 4. Thêm trạng thái 'active' cho nút tương ứng
-            // Sử dụng event.target để lấy chính xác nút đã được click
             event.target.classList.add('active');
         }
         
-        // --- CÁC HÀM XỬ LÝ DỮ LIỆU (LƯU, TẢI, SAO LƯU, PHỤC HỒI) ---
+        function toggleLoading(show) {
+            const loader = document.getElementById('loader-overlay');
+            loader.style.display = show ? 'flex' : 'none';
+        }
+        
+        // --- TÍCH HỢP GEMINI API ---
 
-        /**
-         * Lưu toàn bộ dữ liệu (tasks và goals) vào Local Storage của trình duyệt.
-         * Dữ liệu được chuyển thành chuỗi JSON trước khi lưu.
-         */
+        async function callGeminiAPI(prompt, retries = 3, delay = 1000) {
+            toggleLoading(true);
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const result = await response.json();
+                    if (result.candidates?.[0]?.content.parts?.[0]?.text) {
+                        toggleLoading(false);
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("Phản hồi từ API không hợp lệ.");
+                    }
+                } catch (error) {
+                    console.error(`Lần thử ${i + 1} thất bại:`, error);
+                    if (i === retries - 1) {
+                        alert("Đã xảy ra lỗi khi kết nối với Gemini API. Vui lòng thử lại sau.");
+                        toggleLoading(false);
+                        return null;
+                    }
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                }
+            }
+        }
+
+        async function suggestSubTasks() {
+            const mainTaskName = document.getElementById('task-name').value.trim();
+            if (!mainTaskName) {
+                alert('Vui lòng nhập tên công việc chính trước khi chia nhỏ.');
+                return;
+            }
+            const prompt = `Với vai trò là một trợ lý quản lý dự án, hãy chia nhỏ công việc chính sau đây thành các công việc con cụ thể, có thể hành động được. Chỉ trả lời bằng danh sách có gạch đầu dòng (-), không thêm bất kỳ lời dẫn hay câu kết nào:\n\n"${mainTaskName}"`;
+            const result = await callGeminiAPI(prompt);
+            if (result) {
+                const subTasks = result.split('\n').filter(line => line.trim().startsWith('-')).map(line => line.trim().substring(1).trim());
+                if (subTasks.length === 0) {
+                    alert("Gemini không thể chia nhỏ công việc này. Vui lòng thử một công việc khác rõ ràng hơn.");
+                    return;
+                }
+                const timeframe = document.getElementById('task-timeframe').value;
+                subTasks.forEach(subTaskName => {
+                    tasks.push({
+                        id: Date.now() + Math.random(),
+                        name: `${mainTaskName}: ${subTaskName}`,
+                        timeframe: timeframe,
+                        status: 'Chưa thực hiện',
+                        link: ''
+                    });
+                });
+                saveData();
+                renderTasks();
+                document.getElementById('task-name').value = ''; 
+            }
+        }
+        
+        async function suggestGoalSteps() {
+            const mainGoalName = document.getElementById('goal-name').value.trim();
+            if (!mainGoalName) {
+                alert('Vui lòng nhập mục tiêu chính trước khi cần gợi ý.');
+                return;
+            }
+            const prompt = `Với vai trò là một cố vấn hoạch định chiến lược, hãy gợi ý các bước hành động cụ thể (actionable steps) để đạt được mục tiêu sau. Trình bày dưới dạng danh sách gạch đầu dòng (-), không thêm bất kỳ lời dẫn hay câu kết nào:\n\n"${mainGoalName}"`;
+            const result = await callGeminiAPI(prompt);
+            if (result) {
+                document.getElementById('goal-conditions').value = result;
+            }
+        }
+
+        // --- CÁC HÀM XỬ LÝ DỮ LIỆU ---
+
         function saveData() {
             const appData = { tasks: tasks, goals: goals };
             localStorage.setItem('personalManagerData', JSON.stringify(appData));
-            // Sau mỗi lần lưu, kiểm tra xem có nên hiển thị nút xuất báo cáo không
             checkAndDisplayExportButton();
         }
 
-        /**
-         * Tải dữ liệu từ Local Storage khi trang web được mở.
-         * Nếu có dữ liệu, chuyển từ chuỗi JSON về lại object và gán vào biến.
-         */
         function loadData() {
             const savedData = localStorage.getItem('personalManagerData');
             if (savedData) {
@@ -588,141 +728,51 @@
             }
         }
 
-        /**
-         * Sao lưu toàn bộ dữ liệu hiện tại thành một file .json và cho phép người dùng tải về.
-         */
-        function backupData() {
+        function exportDataToFile() {
             const appData = { tasks: tasks, goals: goals };
-            const dataStr = JSON.stringify(appData, null, 2); // null, 2 để format JSON cho đẹp
+            const dataStr = JSON.stringify(appData, null, 2); 
             const dataBlob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(dataBlob);
-            
             const link = document.createElement('a');
             link.href = url;
-            const date = new Date().toISOString().slice(0, 10); // Lấy ngày hiện tại YYYY-MM-DD
-            link.download = `backup-quanly-congviec-${date}.json`;
-            
-            document.body.appendChild(link);
+            const date = new Date().toISOString().slice(0, 10);
+            link.download = `DuLieu-QuanLyCongViec-${date}.json`;
             link.click();
-            document.body.removeChild(link);
             URL.revokeObjectURL(url);
         }
 
-        /**
-         * Phục hồi dữ liệu từ một file .json do người dùng chọn.
-         * @param {Event} event - Sự kiện 'change' từ input file.
-         */
-        function restoreData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const restoredData = JSON.parse(e.target.result);
-                    // Kiểm tra xem file có đúng cấu trúc không
-                    if (restoredData && Array.isArray(restoredData.tasks) && Array.isArray(restoredData.goals)) {
-                        tasks = restoredData.tasks;
-                        goals = restoredData.goals;
-                        saveData();
-                        renderAll(); // Vẽ lại toàn bộ giao diện
-                        alert('Phục hồi dữ liệu thành công!');
-                    } else {
-                        alert('Lỗi: File không đúng định dạng.');
-                    }
-                } catch (error) {
-                    alert('Lỗi: Không thể đọc file. File có thể bị lỗi.');
-                    console.error("Lỗi khi phục hồi:", error);
-                }
-            };
-            reader.readAsText(file);
-            // Reset input để có thể chọn lại cùng một file
-            event.target.value = '';
-        }
-
-        // --- CÁC HÀM LIÊN QUAN ĐẾN QUẢN LÝ CÔNG VIỆC ---
-        
-        /**
-         * Thêm một công việc mới vào danh sách.
-         */
+        // --- QUẢN LÝ CÔNG VIỆC ---
         function addTask() {
-            // Lấy giá trị từ các ô input
             const name = document.getElementById('task-name').value.trim();
-            const timeframe = document.getElementById('task-timeframe').value;
-            const status = document.getElementById('task-status').value;
-            const link = document.getElementById('task-link').value.trim();
-
-            if (!name) {
-                alert('Vui lòng nhập tên công việc.');
-                return;
-            }
-
-            const newTask = {
-                id: Date.now(), // Dùng timestamp làm ID duy nhất
-                name,
-                timeframe,
-                status,
-                link
-            };
-
-            tasks.push(newTask);
-            saveData();
-            renderTasks();
-            
-            // Xóa nội dung trong form sau khi thêm
+            if (!name) { alert('Vui lòng nhập tên công việc.'); return; }
+            tasks.push({
+                id: Date.now(), name,
+                timeframe: document.getElementById('task-timeframe').value,
+                status: document.getElementById('task-status').value,
+                link: document.getElementById('task-link').value.trim()
+            });
+            saveData(); renderTasks();
             document.getElementById('task-name').value = '';
             document.getElementById('task-link').value = '';
         }
-
-        /**
-         * Xóa một công việc khỏi danh sách dựa vào ID.
-         * @param {number} id - ID của công việc cần xóa.
-         */
         function deleteTask(id) {
             if (confirm('Bạn có chắc chắn muốn xóa công việc này?')) {
                 tasks = tasks.filter(task => task.id !== id);
-                saveData();
-                renderTasks();
+                saveData(); renderTasks();
             }
         }
-        
-        /**
-         * Đánh dấu hoàn thành cho một công việc.
-         * @param {number} id - ID của công việc.
-         */
         function completeTask(id) {
             const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.status = 'Đã hoàn thành';
-                saveData();
-                renderTasks();
-            }
+            if (task) { task.status = 'Đã hoàn thành'; saveData(); renderTasks(); }
         }
-
-        /**
-         * Hiển thị danh sách công việc ra màn hình.
-         */
         function renderTasks() {
             const taskList = document.getElementById('task-list');
-            taskList.innerHTML = ''; // Xóa danh sách cũ
-
-            if (tasks.length === 0) {
-                taskList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có công việc nào.</p>';
-                return;
-            }
-
+            taskList.innerHTML = '';
+            if (tasks.length === 0) { taskList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có công việc nào.</p>'; return; }
             tasks.forEach(task => {
-                // Tạo một thẻ div cho mỗi công việc
                 const item = document.createElement('div');
                 item.className = 'list-item';
-                
-                // Gán màu cho trạng thái
-                let statusClass = '';
-                if (task.status === 'Chưa thực hiện') statusClass = 'not-started';
-                else if (task.status === 'Đang thực hiện') statusClass = 'in-progress';
-                else if (task.status === 'Đã hoàn thành') statusClass = 'completed';
-
-                // Dùng `` (template literals) để tạo HTML dễ dàng hơn
+                let sClass = task.status === 'Chưa thực hiện' ? 'not-started' : (task.status === 'Đang thực hiện' ? 'in-progress' : 'completed');
                 item.innerHTML = `
                     <div class="item-header ${task.status === 'Đã hoàn thành' ? 'completed' : ''}">
                         <h3>${task.name}</h3>
@@ -733,160 +783,60 @@
                         </div>
                     </div>
                     <div class="item-body">
-                        <div class="item-detail">
-                            <span>Thời hạn</span>
-                            <p>${task.timeframe}</p>
-                        </div>
-                        <div class="item-detail">
-                            <span>Tiến độ</span>
-                            <p><span class="status ${statusClass}">${task.status}</span></p>
-                        </div>
-                        <div class="item-detail">
-                            <span>Tài liệu</span>
-                            <p>${task.link ? `<a href="${task.link}" target="_blank">${task.link}</a>` : 'Không có'}</p>
-                        </div>
-                    </div>
-                `;
+                        <div class="item-detail"><span>Thời hạn</span><p>${task.timeframe}</p></div>
+                        <div class="item-detail"><span>Tiến độ</span><p><span class="status ${sClass}">${task.status}</span></p></div>
+                        <div class="item-detail"><span>Tài liệu</span><p>${task.link ? `<a href="${task.link}" target="_blank" rel="noopener noreferrer">${task.link}</a>` : 'Không có'}</p></div>
+                    </div>`;
                 taskList.appendChild(item);
             });
         }
         
-        // --- CÁC HÀM LIÊN QUAN ĐẾN XUẤT BÁO CÁO ---
-        
-        /**
-         * Lấy số tuần trong năm từ một ngày.
-         * @param {Date} d - Đối tượng Date.
-         * @returns {number} - Số tuần.
-         */
-        function getWeekNumber(d) {
-            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-            var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-            return weekNo;
-        }
-        
-        /**
-         * Kiểm tra xem tất cả công việc của tuần hiện tại đã hoàn thành chưa.
-         * Nếu có, hiển thị nút "Xuất Báo Cáo Tuần".
-         */
+        // --- XUẤT BÁO CÁO ---
         function checkAndDisplayExportButton() {
-            const exportBtn = document.querySelector('.export-report-btn');
-            const currentWeek = getWeekNumber(new Date());
-            const currentYear = new Date().getFullYear();
-
-            // Lọc ra các công việc thuộc tuần này
-            const weeklyTasks = tasks.filter(task => {
-                // Giả sử công việc "Tuần" được tạo trong tuần đó
-                // Logic này có thể cần phức tạp hơn nếu muốn quản lý ngày tạo
-                return task.timeframe === 'Tuần';
-            });
-            
-            if (weeklyTasks.length > 0 && weeklyTasks.every(task => task.status === 'Đã hoàn thành')) {
-                exportBtn.style.display = 'block';
-            } else {
-                exportBtn.style.display = 'none';
-            }
+            const btn = document.querySelector('.export-report-btn');
+            const weekly = tasks.filter(t => t.timeframe === 'Tuần');
+            btn.style.display = (weekly.length > 0 && weekly.every(t => t.status === 'Đã hoàn thành')) ? 'block' : 'none';
         }
-        
-        /**
-         * Xuất các công việc đã hoàn thành trong tuần ra file .csv.
-         */
         function exportWeeklyReport() {
-            const weeklyTasksCompleted = tasks.filter(task => task.timeframe === 'Tuần' && task.status === 'Đã hoàn thành');
-
-            if (weeklyTasksCompleted.length === 0) {
-                alert("Không có công việc tuần nào đã hoàn thành để xuất báo cáo.");
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Tên Công Việc,Tiến Độ,Link Tài Liệu\r\n"; // Header của file CSV
-
-            weeklyTasksCompleted.forEach(task => {
-                let row = `"${task.name}","${task.status}","${task.link}"`;
-                csvContent += row + "\r\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
+            const completed = tasks.filter(t => t.timeframe === 'Tuần' && t.status === 'Đã hoàn thành');
+            if (completed.length === 0) return;
+            let csv = "data:text/csv;charset=utf-8,Tên Công Việc,Tiến Độ,Link Tài Liệu\r\n";
+            completed.forEach(t => { csv += `"${t.name}","${t.status}","${t.link}"\r\n`; });
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            const date = new Date().toISOString().slice(0, 10);
-            link.setAttribute("download", `bao-cao-tuan-${date}.csv`);
-            document.body.appendChild(link);
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", `bao-cao-tuan-${new Date().toISOString().slice(0, 10)}.csv`);
             link.click();
-            document.body.removeChild(link);
         }
 
-        // --- CÁC HÀM LIÊN QUAN ĐẾN QUẢN LÝ MỤC TIÊU ---
-
-        /**
-         * Thêm một mục tiêu mới.
-         */
+        // --- QUẢN LÝ MỤC TIÊU ---
         function addGoal() {
             const name = document.getElementById('goal-name').value.trim();
-            const conditions = document.getElementById('goal-conditions').value.trim();
-            const link = document.getElementById('goal-link').value.trim();
-            
-            if (!name) {
-                alert('Vui lòng nhập tên mục tiêu.');
-                return;
-            }
-
-            const newGoal = {
-                id: Date.now(),
-                name,
-                conditions,
-                link,
+            if (!name) { alert('Vui lòng nhập tên mục tiêu.'); return; }
+            goals.push({
+                id: Date.now(), name,
+                conditions: document.getElementById('goal-conditions').value.trim(),
+                link: document.getElementById('goal-link').value.trim(),
                 completed: false
-            };
-
-            goals.push(newGoal);
-            saveData();
-            renderGoals();
-            
+            });
+            saveData(); renderGoals();
             document.getElementById('goal-name').value = '';
             document.getElementById('goal-conditions').value = '';
             document.getElementById('goal-link').value = '';
         }
-
-        /**
-         * Xóa một mục tiêu.
-         * @param {number} id - ID của mục tiêu cần xóa.
-         */
         function deleteGoal(id) {
             if (confirm('Bạn có chắc chắn muốn xóa mục tiêu này?')) {
-                goals = goals.filter(goal => goal.id !== id);
-                saveData();
-                renderGoals();
+                goals = goals.filter(g => g.id !== id);
+                saveData(); renderGoals();
             }
         }
-
-        /**
-         * Chuyển đổi trạng thái hoàn thành của mục tiêu.
-         * @param {number} id - ID của mục tiêu.
-         */
         function toggleGoalCompletion(id) {
             const goal = goals.find(g => g.id === id);
-            if (goal) {
-                goal.completed = !goal.completed;
-                saveData();
-                renderGoals();
-            }
+            if (goal) { goal.completed = !goal.completed; saveData(); renderGoals(); }
         }
-
-        /**
-         * Hiển thị danh sách mục tiêu ra màn hình.
-         */
         function renderGoals() {
             const goalList = document.getElementById('goal-list');
             goalList.innerHTML = '';
-
-            if (goals.length === 0) {
-                goalList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có mục tiêu nào.</p>';
-                return;
-            }
-
+            if (goals.length === 0) { goalList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có mục tiêu nào.</p>'; return; }
             goals.forEach(goal => {
                 const item = document.createElement('div');
                 item.className = 'list-item';
@@ -896,154 +846,81 @@
                         <div class="item-actions">
                             <button class="edit-btn" onclick="openEditModal('goal', ${goal.id})">Sửa</button>
                             <button class="delete-btn" onclick="deleteGoal(${goal.id})">Xóa</button>
-                            <button class="complete-btn" onclick="toggleGoalCompletion(${goal.id})">
-                                ${goal.completed ? 'Đánh dấu chưa xong' : 'Đánh dấu hoàn thành'}
-                            </button>
+                            <button class="complete-btn" onclick="toggleGoalCompletion(${goal.id})">${goal.completed ? 'Bỏ hoàn thành' : 'Hoàn thành'}</button>
                         </div>
                     </div>
                     <div class="item-body" style="grid-template-columns: 1fr;">
-                        <div class="item-detail">
-                            <span>Việc cần làm</span>
-                            <p style="white-space: pre-wrap;">${goal.conditions || 'Không có'}</p>
-                        </div>
-                        <div class="item-detail">
-                            <span>Link đính kèm</span>
-                            <p>${goal.link ? `<a href="${goal.link}" target="_blank">${goal.link}</a>` : 'Không có'}</p>
-                        </div>
-                    </div>
-                `;
+                        <div class="item-detail"><span>Việc cần làm</span><p style="white-space: pre-wrap;">${goal.conditions || 'Không có'}</p></div>
+                        <div class="item-detail"><span>Link đính kèm</span><p>${goal.link ? `<a href="${goal.link}" target="_blank" rel="noopener noreferrer">${goal.link}</a>` : 'Không có'}</p></div>
+                    </div>`;
                 goalList.appendChild(item);
             });
         }
         
-        // --- CÁC HÀM XỬ LÝ MODAL CHỈNH SỬA ---
-
-        /**
-         * Mở modal và hiển thị form chỉnh sửa cho công việc hoặc mục tiêu.
-         * @param {string} type - Loại cần sửa ('task' hoặc 'goal').
-         * @param {number} id - ID của mục cần sửa.
-         */
+        // --- MODAL CHỈNH SỬA ---
         function openEditModal(type, id) {
             editingItemId = id;
-            const modal = document.getElementById('edit-modal');
-            const modalBody = document.getElementById('edit-modal-body');
-            modalBody.innerHTML = ''; // Xóa nội dung cũ
-
+            const modal = document.getElementById('edit-modal'), body = document.getElementById('edit-modal-body');
             if (type === 'task') {
-                const task = tasks.find(t => t.id === id);
-                modalBody.innerHTML = `
-                    <div class="form-group">
-                        <label for="edit-task-name">Tên công việc</label>
-                        <input type="text" id="edit-task-name" value="${task.name}">
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-task-timeframe">Thời hạn</label>
-                        <select id="edit-task-timeframe">
-                            <option value="Ngày" ${task.timeframe === 'Ngày' ? 'selected' : ''}>Ngày</option>
-                            <option value="Tuần" ${task.timeframe === 'Tuần' ? 'selected' : ''}>Tuần</option>
-                            <option value="Tháng" ${task.timeframe === 'Tháng' ? 'selected' : ''}>Tháng</option>
-                            <option value="Quý" ${task.timeframe === 'Quý' ? 'selected' : ''}>Quý</option>
-                            <option value="Năm" ${task.timeframe === 'Năm' ? 'selected' : ''}>Năm</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-task-status">Tiến độ</label>
-                        <select id="edit-task-status">
-                            <option value="Chưa thực hiện" ${task.status === 'Chưa thực hiện' ? 'selected' : ''}>Chưa thực hiện</option>
-                            <option value="Đang thực hiện" ${task.status === 'Đang thực hiện' ? 'selected' : ''}>Đang thực hiện</option>
-                            <option value="Đã hoàn thành" ${task.status === 'Đã hoàn thành' ? 'selected' : ''}>Đã hoàn thành</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-task-link">Link tài liệu</label>
-                        <input type="text" id="edit-task-link" value="${task.link}">
-                    </div>
-                    <button class="btn-submit" onclick="saveTaskChanges()">Lưu thay đổi</button>
-                `;
+                const t = tasks.find(i => i.id === id);
+                body.innerHTML = `
+                    <div class="form-group"><label>Tên</label><input id="edit-task-name" value="${t.name}"></div>
+                    <div class="form-group"><label>Thời hạn</label><select id="edit-task-timeframe"><option ${t.timeframe === 'Ngày' ? 'selected' : ''}>Ngày</option><option ${t.timeframe === 'Tuần' ? 'selected' : ''}>Tuần</option><option ${t.timeframe === 'Tháng' ? 'selected' : ''}>Tháng</option><option ${t.timeframe === 'Quý' ? 'selected' : ''}>Quý</option><option ${t.timeframe === 'Năm' ? 'selected' : ''}>Năm</option></select></div>
+                    <div class="form-group"><label>Tiến độ</label><select id="edit-task-status"><option ${t.status === 'Chưa thực hiện' ? 'selected' : ''}>Chưa thực hiện</option><option ${t.status === 'Đang thực hiện' ? 'selected' : ''}>Đang thực hiện</option><option ${t.status === 'Đã hoàn thành' ? 'selected' : ''}>Đã hoàn thành</option></select></div>
+                    <div class="form-group"><label>Link</label><input id="edit-task-link" value="${t.link}"></div>
+                    <button class="btn-submit" onclick="saveTaskChanges()">Lưu</button>`;
             } else if (type === 'goal') {
-                const goal = goals.find(g => g.id === id);
-                modalBody.innerHTML = `
-                    <div class="form-group">
-                        <label for="edit-goal-name">Mục tiêu</label>
-                        <input type="text" id="edit-goal-name" value="${goal.name}">
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-goal-conditions">Việc cần làm</label>
-                        <textarea id="edit-goal-conditions">${goal.conditions}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-goal-link">Link đính kèm</label>
-                        <input type="text" id="edit-goal-link" value="${goal.link}">
-                    </div>
-                    <button class="btn-submit" onclick="saveGoalChanges()">Lưu thay đổi</button>
-                `;
+                const g = goals.find(i => i.id === id);
+                body.innerHTML = `
+                    <div class="form-group"><label>Mục tiêu</label><input id="edit-goal-name" value="${g.name}"></div>
+                    <div class="form-group"><label>Việc cần làm</label><textarea id="edit-goal-conditions">${g.conditions}</textarea></div>
+                    <div class="form-group"><label>Link</label><input id="edit-goal-link" value="${g.link}"></div>
+                    <button class="btn-submit" onclick="saveGoalChanges()">Lưu</button>`;
             }
-
             modal.style.display = 'block';
         }
-
-        /**
-         * Đóng modal chỉnh sửa.
-         */
-        function closeModal() {
-            document.getElementById('edit-modal').style.display = 'none';
-            editingItemId = null; // Reset ID đang sửa
-        }
-
-        /**
-         * Lưu các thay đổi của công việc sau khi sửa.
-         */
+        function closeModal() { document.getElementById('edit-modal').style.display = 'none'; editingItemId = null; }
         function saveTaskChanges() {
-            const task = tasks.find(t => t.id === editingItemId);
-            if (task) {
-                task.name = document.getElementById('edit-task-name').value.trim();
-                task.timeframe = document.getElementById('edit-task-timeframe').value;
-                task.status = document.getElementById('edit-task-status').value;
-                task.link = document.getElementById('edit-task-link').value.trim();
-                saveData();
-                renderTasks();
-                closeModal();
+            const t = tasks.find(i => i.id === editingItemId);
+            if (t) {
+                t.name = document.getElementById('edit-task-name').value.trim();
+                t.timeframe = document.getElementById('edit-task-timeframe').value;
+                t.status = document.getElementById('edit-task-status').value;
+                t.link = document.getElementById('edit-task-link').value.trim();
+                saveData(); renderTasks(); closeModal();
             }
         }
-
-        /**
-         * Lưu các thay đổi của mục tiêu sau khi sửa.
-         */
         function saveGoalChanges() {
-            const goal = goals.find(g => g.id === editingItemId);
-            if (goal) {
-                goal.name = document.getElementById('edit-goal-name').value.trim();
-                goal.conditions = document.getElementById('edit-goal-conditions').value.trim();
-                goal.link = document.getElementById('edit-goal-link').value.trim();
-                saveData();
-                renderGoals();
-                closeModal();
+            const g = goals.find(i => i.id === editingItemId);
+            if (g) {
+                g.name = document.getElementById('edit-goal-name').value.trim();
+                g.conditions = document.getElementById('edit-goal-conditions').value.trim();
+                g.link = document.getElementById('edit-goal-link').value.trim();
+                saveData(); renderGoals(); closeModal();
             }
         }
         
-        /**
-         * Hàm tổng hợp để vẽ lại toàn bộ giao diện.
-         */
-        function renderAll() {
-            renderTasks();
-            renderGoals();
-        }
+        function renderAll() { renderTasks(); renderGoals(); }
 
         // --- KHỞI CHẠY ỨNG DỤNG ---
-        // Sự kiện này đảm bảo code chỉ chạy sau khi toàn bộ trang web đã tải xong
         document.addEventListener('DOMContentLoaded', () => {
-            loadData(); // Tải dữ liệu đã lưu
-            renderAll(); // Vẽ giao diện lần đầu
+            // Kiểm tra xem người dùng đã đăng nhập chưa
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                showApp();
+            } else {
+                showLoginScreen();
+            }
         });
         
-        // Đóng modal nếu người dùng click ra ngoài vùng nội dung
-        window.onclick = function(event) {
-            const modal = document.getElementById('edit-modal');
-            if (event.target == modal) {
-                closeModal();
+        // Bắt sự kiện nhấn Enter trên ô mật khẩu để đăng nhập
+        document.getElementById('password').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.querySelector('.login-box .btn-submit').click();
             }
-        }
-
+        });
+        
+        window.onclick = (event) => { if (event.target == document.getElementById('edit-modal')) closeModal(); }
     </script>
 </body>
 </html>
