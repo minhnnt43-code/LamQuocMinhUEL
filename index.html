@@ -120,7 +120,6 @@
         .nav-menu {
             list-style: none;
             margin-bottom: 2rem;
-            flex-grow: 1; /* Đẩy phần sao lưu xuống dưới */
         }
 
         .nav-menu li {
@@ -152,6 +151,12 @@
             font-weight: bold;
         }
         
+        .sidebar-footer {
+            margin-top: auto; /* Đẩy footer xuống dưới cùng */
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
         .sidebar-footer button {
             width: 100%;
             margin-top: 0.5rem;
@@ -161,6 +166,41 @@
             font-size: 0.9rem;
             font-weight: bold;
             transition: all 0.3s;
+        }
+
+        .api-key-section {
+            margin-bottom: 1rem;
+        }
+
+        .api-key-section label {
+            font-size: 0.9rem;
+            font-weight: normal;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .api-key-section input {
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: 6px;
+            border: 1px solid var(--white);
+            background-color: rgba(255,255,255,0.1);
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+        
+        .api-key-section input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .save-key-btn {
+            background-color: var(--primary-orange) !important;
+            border: 2px solid var(--primary-orange) !important;
+            color: var(--white) !important;
+        }
+        .save-key-btn:hover {
+             background-color: var(--secondary-orange) !important;
+             border-color: var(--secondary-orange) !important;
         }
 
         .export-btn {
@@ -475,7 +515,7 @@
             }
             .sidebar-header { width: 100%; margin-bottom: 1rem; font-size: 1.2rem; }
             .nav-menu { display: flex; flex-grow: 1; margin-bottom: 0; }
-            .sidebar-footer { display: flex; gap: 0.5rem; }
+            .sidebar-footer { display: flex; gap: 0.5rem; flex-wrap: wrap; }
             .main-content { margin-left: 0; width: 100%; padding: 1rem; }
             h1 { font-size: 2rem; }
             .form-grid, .input-with-gemini { grid-template-columns: 1fr; flex-direction: column; align-items: stretch; }
@@ -514,6 +554,11 @@
                 <li><button class="nav-btn" onclick="showSection('goals')">Quản lý mục tiêu</button></li>
             </ul>
             <div class="sidebar-footer">
+                <div class="api-key-section">
+                    <label for="api-key-input">Gemini API Key</label>
+                    <input type="password" id="api-key-input" placeholder="Dán API Key của bạn vào đây">
+                    <button class="save-key-btn" onclick="saveApiKey()">Lưu Key</button>
+                </div>
                 <button class="export-btn" onclick="exportDataToFile()">Xuất Dữ Liệu Ra File</button>
                 <button class="logout-btn" onclick="handleLogout()">Đăng xuất</button>
             </div>
@@ -572,7 +617,7 @@
         let tasks = [];
         let goals = [];
         let editingItemId = null;
-        const apiKey = "";
+        let userApiKey = "";
 
         // --- CÁC HÀM XỬ LÝ ĐĂNG NHẬP / ĐĂNG XUẤT ---
         
@@ -634,21 +679,55 @@
             loader.style.display = show ? 'flex' : 'none';
         }
         
+        // --- QUẢN LÝ API KEY ---
+        /**
+         * Lưu API Key do người dùng nhập vào localStorage.
+         */
+        function saveApiKey() {
+            const apiKeyInput = document.getElementById('api-key-input');
+            const newApiKey = apiKeyInput.value.trim();
+            if (newApiKey) {
+                localStorage.setItem('geminiApiKey', newApiKey);
+                userApiKey = newApiKey;
+                alert('API Key đã được lưu thành công!');
+            } else {
+                alert('Vui lòng nhập API Key.');
+            }
+        }
+
+        /**
+         * Tải API Key từ localStorage khi ứng dụng khởi động.
+         */
+        function loadApiKey() {
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                userApiKey = savedKey;
+                document.getElementById('api-key-input').value = savedKey;
+            }
+        }
+
         // --- TÍCH HỢP GEMINI API ---
 
         async function callGeminiAPI(prompt, retries = 3, delay = 1000) {
+            if (!userApiKey) {
+                alert('Lỗi: Vui lòng nhập Gemini API Key của bạn ở thanh bên trái và nhấn "Lưu Key".');
+                return null;
+            }
+
             toggleLoading(true);
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userApiKey}`;
             const payload = { contents: [{ parts: [{ text: prompt }] }] };
 
+            let response;
             for (let i = 0; i < retries; i++) {
                 try {
-                    const response = await fetch(apiUrl, {
+                    response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
                     const result = await response.json();
                     if (result.candidates?.[0]?.content.parts?.[0]?.text) {
                         toggleLoading(false);
@@ -659,7 +738,11 @@
                 } catch (error) {
                     console.error(`Lần thử ${i + 1} thất bại:`, error);
                     if (i === retries - 1) {
-                        alert("Đã xảy ra lỗi khi kết nối với Gemini API. Vui lòng thử lại sau.");
+                        if (response && response.status === 400) {
+                             alert("Lỗi: API Key không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại.");
+                        } else {
+                             alert("Đã xảy ra lỗi khi kết nối với Gemini API. Vui lòng kiểm tra kết nối mạng và API Key.");
+                        }
                         toggleLoading(false);
                         return null;
                     }
@@ -904,6 +987,7 @@
 
         // --- KHỞI CHẠY ỨNG DỤNG ---
         document.addEventListener('DOMContentLoaded', () => {
+            loadApiKey();
             // Kiểm tra xem người dùng đã đăng nhập chưa
             if (sessionStorage.getItem('isLoggedIn') === 'true') {
                 showApp();
@@ -924,3 +1008,4 @@
     </script>
 </body>
 </html>
+
