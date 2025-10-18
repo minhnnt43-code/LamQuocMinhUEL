@@ -1,3 +1,46 @@
+:root {
+    /* Bảng màu chính */
+    --mau-nen-gradient-start: #0a4a7a;
+    --mau-nen-gradient-mid: #1e88e5;
+    --mau-nen-gradient-end: #42a5f5;
+
+    --mau-header-gradient-start: #0d47a1;
+    --mau-header-gradient-end: #1976d2;
+
+    --mau-nav-gradient-start: #0d47a1;
+    --mau-nav-gradient-mid: #1565c0;
+    --mau-nav-gradient-end: #1976d2;
+
+    --mau-chu-chinh: #1a1a1a;
+    --mau-chu-phu: #e3f2fd;
+    --mau-chu-trang: #ffffff;
+
+    --mau-nen-noi-dung: #ffffff;
+    --mau-nen-item: #e3f2fd;
+    --mau-nen-item-hover: #bbdefb;
+    
+    --mau-vien-chinh: #1976d2;
+    --mau-vien-phu: #bbdefb;
+    --mau-vien-dam: #0d47a1;
+
+    /* Màu sắc chức năng */
+    --mau-thanh-cong-start: #00897b;
+    --mau-thanh-cong-end: #00695c;
+    --mau-xoa-start: #e53935;
+    --mau-xoa-end: #c62828;
+
+    /* Màu sắc tài chính */
+    --mau-thu-nhap-start: #0288d1;
+    --mau-thu-nhap-end: #0277bd;
+    --mau-chi-tieu-start: #e53935;
+    --mau-chi-tieu-end: #c62828;
+    --mau-con-lai-start: #00897b;
+    --mau-con-lai-end: #00695c;
+
+    /* Font chữ */
+    --font-chinh: 'UTM Avo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,10 +48,10 @@
 }
 
 body {
-    font-family: 'UTM Avo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #0a4a7a 0%, #1e88e5 50%, #42a5f5 100%);
+    font-family: var(--font-chinh);
+    background: linear-gradient(135deg, var(--mau-nen-gradient-start) 0%, var(--mau-nen-gradient-mid) 50%, var(--mau-nen-gradient-end) 100%);
     min-height: 100vh;
-    color: #1a1a1a;
+    color: var(--mau-chu-chinh);
     position: relative;
 }
 
@@ -20,15 +63,15 @@ body {
 
 /* Header */
 header {
-    background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
+    background: linear-gradient(135deg, var(--mau-header-gradient-start) 0%, var(--mau-header-gradient-end) 100%);
     padding: 40px 0;
     text-align: center;
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    border-bottom: 3px solid #0d47a1;
+    border-bottom: 3px solid var(--mau-vien-dam);
 }
 
 header h1 {
-    color: #ffffff;
+    color: var(--mau-chu-trang);
     font-size: 2.8em;
     margin-bottom: 12px;
     font-weight: 700;
@@ -37,7 +80,7 @@ header h1 {
 }
 
 .subtitle {
-    color: #e3f2fd;
+    color: var(--mau-chu-phu);
     font-size: 1.2em;
     font-weight: 400;
     letter-spacing: 0.3px;
@@ -45,7 +88,7 @@ header h1 {
 
 /* Navigation */
 .main-nav {
-    background: linear-gradient(to right, #0d47a1, #1565c0, #1976d2);
+    background: linear-gradient(to right, var(--mau-nav-gradient-start), var(--mau-nav-gradient-mid), var(--mau-nav-gradient-end));
     padding: 18px 0;
     position: sticky;
     top: 0;
@@ -64,7 +107,7 @@ header h1 {
 .nav-btn {
     background: rgba(255, 255, 255, 0.15);
     border: 2px solid rgba(255, 255, 255, 0.5);
-    color: #ffffff;
+    color: var(--mau-chu-trang);
     padding: 13px 28px;
     border-radius: 30px;
     cursor: pointer;
@@ -83,9 +126,9 @@ header h1 {
 }
 
 .nav-btn.active {
-    background: #ffffff;
-    color: #0d47a1;
-    border-color: #ffffff;
+    background: var(--mau-chu-trang);
+    color: var(--mau-vien-dam);
+    border-color: var(--mau-chu-trang);
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
@@ -96,12 +139,12 @@ main {
 
 .content-section {
     display: none;
-    background: #ffffff;
+    background: var(--mau-nen-noi-dung);
     padding: 35px;
     border-radius: 16px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.25);
     animation: fadeIn 0.5s ease;
-    border-top: 4px solid #1976d2;
+    border-top: 4px solid var(--mau-vien-chinh);
 }
 
 .content-section.active {
@@ -120,12 +163,12 @@ main {
 }
 
 .content-section h2 {
-    color: #0d47a1;
+    color: var(--mau-vien-dam);
     margin-bottom: 30px;
     font-size: 2.2em;
     font-weight: 700;
     letter-spacing: 0.3px;
-    border-bottom: 3px solid #1976d2;
+    border-bottom: 3px solid var(--mau-vien-chinh);
     padding-bottom: 15px;
 }
 
@@ -142,25 +185,25 @@ main {
     flex: 1;
     min-width: 200px;
     padding: 14px 18px;
-    border: 2px solid #bbdefb;
+    border: 2px solid var(--mau-vien-phu);
     border-radius: 10px;
     font-size: 1em;
-    font-family: 'UTM Avo', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-chinh);
     transition: all 0.3s ease;
-    background: #ffffff;
+    background: var(--mau-nen-noi-dung);
 }
 
 .input-group input:focus,
 .input-group select:focus {
     outline: none;
-    border-color: #1976d2;
+    border-color: var(--mau-vien-chinh);
     box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
     background: #f8fcff;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--mau-header-gradient-end) 0%, var(--mau-nav-gradient-mid) 100%);
+    color: var(--mau-chu-trang);
     border: none;
     padding: 14px 35px;
     border-radius: 10px;
@@ -173,7 +216,7 @@ main {
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+    background: linear-gradient(135deg, var(--mau-nav-gradient-mid) 0%, var(--mau-header-gradient-start) 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
 }
@@ -184,7 +227,7 @@ main {
 }
 
 .item-list li {
-    background: linear-gradient(to right, #e3f2fd, #ffffff);
+    background: linear-gradient(to right, var(--mau-nen-item), var(--mau-nen-noi-dung));
     padding: 18px;
     margin-bottom: 12px;
     border-radius: 10px;
@@ -192,12 +235,12 @@ main {
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s ease;
-    border-left: 4px solid #1976d2;
+    border-left: 4px solid var(--mau-vien-chinh);
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .item-list li:hover {
-    background: linear-gradient(to right, #bbdefb, #e3f2fd);
+    background: linear-gradient(to right, var(--mau-nen-item-hover), var(--mau-nen-item));
     transform: translateX(8px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
@@ -231,14 +274,14 @@ main {
 }
 
 .btn-complete {
-    background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--mau-thanh-cong-start) 0%, var(--mau-thanh-cong-end) 100%);
+    color: var(--mau-chu-trang);
     box-shadow: 0 2px 8px rgba(0, 137, 123, 0.3);
 }
 
 .btn-delete {
-    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--mau-xoa-start) 0%, var(--mau-xoa-end) 100%);
+    color: var(--mau-chu-trang);
     box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
 }
 
@@ -255,10 +298,10 @@ main {
 }
 
 .card-item {
-    background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+    background: linear-gradient(135deg, var(--mau-nen-item) 0%, var(--mau-nen-noi-dung) 100%);
     padding: 24px;
     border-radius: 12px;
-    border-left: 5px solid #1976d2;
+    border-left: 5px solid var(--mau-vien-chinh);
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
@@ -266,11 +309,11 @@ main {
 .card-item:hover {
     transform: translateY(-8px);
     box-shadow: 0 8px 25px rgba(25, 118, 210, 0.2);
-    border-left-color: #0d47a1;
+    border-left-color: var(--mau-vien-dam);
 }
 
 .card-item h3 {
-    color: #0d47a1;
+    color: var(--mau-vien-dam);
     margin-bottom: 12px;
     font-weight: 700;
     font-size: 1.3em;
@@ -301,7 +344,7 @@ main {
     padding: 30px;
     border-radius: 16px;
     text-align: center;
-    color: white;
+    color: var(--mau-chu-trang);
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     transition: all 0.3s ease;
 }
@@ -312,17 +355,17 @@ main {
 }
 
 .summary-card.income {
-    background: linear-gradient(135deg, #0288d1 0%, #0277bd 100%);
+    background: linear-gradient(135deg, var(--mau-thu-nhap-start) 0%, var(--mau-thu-nhap-end) 100%);
     border-top: 4px solid #01579b;
 }
 
 .summary-card.expense {
-    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    background: linear-gradient(135deg, var(--mau-chi-tieu-start) 0%, var(--mau-chi-tieu-end) 100%);
     border-top: 4px solid #b71c1c;
 }
 
 .summary-card.balance {
-    background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
+    background: linear-gradient(135deg, var(--mau-con-lai-start) 0%, var(--mau-con-lai-end) 100%);
     border-top: 4px solid #004d40;
 }
 
@@ -347,25 +390,25 @@ main {
 }
 
 .finance-item.income {
-    border-left: 5px solid #00897b;
+    border-left: 5px solid var(--mau-thanh-cong-start);
 }
 
 .finance-item.expense {
-    border-left: 5px solid #e53935;
+    border-left: 5px solid var(--mau-xoa-start);
 }
 
 /* Footer */
 footer {
-    background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
+    background: linear-gradient(135deg, var(--mau-header-gradient-start) 0%, var(--mau-header-gradient-end) 100%);
     padding: 25px 0;
     text-align: center;
     margin-top: 50px;
     box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-    border-top: 3px solid #0d47a1;
+    border-top: 3px solid var(--mau-vien-dam);
 }
 
 footer p {
-    color: #e3f2fd;
+    color: var(--mau-chu-phu);
     font-weight: 500;
     letter-spacing: 0.3px;
 }
@@ -382,16 +425,16 @@ footer p {
 }
 
 ::-webkit-scrollbar-track {
-    background: #e3f2fd;
+    background: var(--mau-nen-item);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #1976d2;
+    background: var(--mau-vien-chinh);
     border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #0d47a1;
+    background: var(--mau-vien-dam);
 }
 
 /* Responsive */
@@ -426,4 +469,3 @@ footer p {
         grid-template-columns: 1fr;
     }
 }
-
