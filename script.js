@@ -1,332 +1,766 @@
-// --- QUẢN LÝ DỮ LIỆU TRUNG TÂM ---
-// Tất cả dữ liệu của ứng dụng sẽ được lưu trong đối tượng này.
-const appData = {
-    workItems: [],
-    dataItems: [],
-    financeItems: [],
-    achievements: []
-};
-
-// --- CÁC HÀM XỬ LÝ CHUNG ---
-
-/**
- * Hiển thị một mục (section) và ẩn các mục khác.
- * @param {string} sectionId - ID của section cần hiển thị.
- */
-function showSection(sectionId) {
-    // Ẩn tất cả các phần nội dung
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.remove('active');
-    });
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Công Việc & Mục Tiêu</title>
     
-    // Bỏ trạng thái 'active' khỏi tất cả các nút điều hướng
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    <!-- Tích hợp Fonts từ Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     
-    // Hiển thị section được chọn
-    document.getElementById(sectionId).classList.add('active');
-    
-    // Thêm trạng thái 'active' cho nút được nhấn
-    event.target.classList.add('active');
-}
-
-/**
- * Lưu toàn bộ dữ liệu ứng dụng vào localStorage.
- * Bọc trong try...catch để xử lý trường hợp trình duyệt chặn localStorage.
- */
-function saveDataToStorage() {
-    try {
-        localStorage.setItem('personalManagerData', JSON.stringify(appData));
-    } catch (e) {
-        console.error("Lỗi khi lưu dữ liệu vào localStorage:", e);
-        // Có thể hiển thị một thông báo cho người dùng ở đây nếu cần.
-    }
-}
-
-/**
- * Tải toàn bộ dữ liệu từ localStorage khi ứng dụng khởi động.
- */
-function loadDataFromStorage() {
-    try {
-        const savedData = JSON.parse(localStorage.getItem('personalManagerData'));
-        if (savedData) {
-            // Gán dữ liệu đã lưu vào đối tượng appData
-            appData.workItems = savedData.workItems || [];
-            appData.dataItems = savedData.dataItems || [];
-            appData.financeItems = savedData.financeItems || [];
-            appData.achievements = savedData.achievements || [];
+    <!-- Toàn bộ CSS của trang web -->
+    <style>
+        :root {
+            --primary-blue: #005B96;
+            --primary-orange: #FF7A00;
+            --secondary-orange: #ff9d47;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #343a40;
+            --white: #ffffff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --due-soon-color: #fd7e14;
+            --font-title: 'Montserrat', sans-serif;
+            --font-body: 'UTM Avo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
-    } catch (e) {
-        console.error("Lỗi khi tải dữ liệu từ localStorage:", e);
-    }
-}
 
-// --- QUẢN LÝ CÔNG VIỆC (WORK) ---
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-function addWork() {
-    const input = document.getElementById('workInput');
-    const text = input.value.trim();
-    
-    if (text === '') {
-        alert('Vui lòng nhập công việc!');
-        return;
-    }
-    
-    appData.workItems.push({
-        id: Date.now(),
-        text: text,
-        completed: false
-    });
-    
-    saveDataToStorage();
-    renderWork();
-    input.value = '';
-    input.focus();
-}
-
-function toggleWork(id) {
-    const work = appData.workItems.find(item => item.id === id);
-    if (work) {
-        work.completed = !work.completed;
-        saveDataToStorage();
-        renderWork();
-    }
-}
-
-function deleteWork(id) {
-    appData.workItems = appData.workItems.filter(item => item.id !== id);
-    saveDataToStorage();
-    renderWork();
-}
-
-function renderWork() {
-    const list = document.getElementById('workList');
-    list.innerHTML = '';
-    
-    appData.workItems.forEach(work => {
-        const li = document.createElement('li');
-        li.className = work.completed ? 'completed' : '';
-        li.innerHTML = `
-            <div class="item-content">${work.text}</div>
-            <div class="item-actions">
-                <button class="btn-small btn-complete" onclick="toggleWork(${work.id})">
-                    ${work.completed ? '↩️ Hoàn tác' : '✓ Hoàn thành'}
-                </button>
-                <button class="btn-small btn-delete" onclick="deleteWork(${work.id})">🗑️ Xóa</button>
-            </div>
-        `;
-        list.appendChild(li);
-    });
-}
-
-// --- QUẢN LÝ DỮ LIỆU (DATA) ---
-
-function addData() {
-    const titleInput = document.getElementById('dataTitle');
-    const contentInput = document.getElementById('dataContent');
-    
-    const title = titleInput.value.trim();
-    const content = contentInput.value.trim();
-    
-    if (title === '' || content === '') {
-        alert('Vui lòng nhập đầy đủ tiêu đề và nội dung!');
-        return;
-    }
-    
-    appData.dataItems.push({
-        id: Date.now(),
-        title: title,
-        content: content,
-        date: new Date().toLocaleDateString('vi-VN')
-    });
-    
-    saveDataToStorage();
-    renderData();
-    titleInput.value = '';
-    contentInput.value = '';
-}
-
-function deleteData(id) {
-    appData.dataItems = appData.dataItems.filter(item => item.id !== id);
-    saveDataToStorage();
-    renderData();
-}
-
-function renderData() {
-    const list = document.getElementById('dataList');
-    list.innerHTML = '';
-    
-    // Hiển thị dữ liệu mới nhất lên đầu
-    [...appData.dataItems].reverse().forEach(data => {
-        const card = document.createElement('div');
-        card.className = 'card-item';
-        card.innerHTML = `
-            <h3>${data.title}</h3>
-            <p>${data.content.replace(/\n/g, '<br>')}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="date">📅 ${data.date}</span>
-                <button class="btn-small btn-delete" onclick="deleteData(${data.id})">🗑️ Xóa</button>
-            </div>
-        `;
-        list.appendChild(card);
-    });
-}
-
-// --- QUẢN LÝ TÀI CHÍNH (FINANCE) ---
-
-function addFinance() {
-    const type = document.getElementById('financeType').value;
-    const descInput = document.getElementById('financeDesc');
-    const amountInput = document.getElementById('financeAmount');
-    
-    const desc = descInput.value.trim();
-    const amount = parseFloat(amountInput.value);
-    
-    if (desc === '' || isNaN(amount) || amount <= 0) {
-        alert('Vui lòng nhập đầy đủ thông tin hợp lệ!');
-        return;
-    }
-    
-    appData.financeItems.push({
-        id: Date.now(),
-        type: type,
-        description: desc,
-        amount: amount,
-        date: new Date().toLocaleDateString('vi-VN')
-    });
-    
-    saveDataToStorage();
-    renderFinance();
-    
-    descInput.value = '';
-    amountInput.value = '';
-}
-
-function deleteFinance(id) {
-    appData.financeItems = appData.financeItems.filter(item => item.id !== id);
-    saveDataToStorage();
-    renderFinance();
-}
-
-function renderFinance() {
-    const list = document.getElementById('financeList');
-    list.innerHTML = '';
-    
-    let totalIncome = 0;
-    let totalExpense = 0;
-    
-    appData.financeItems.forEach(finance => {
-        if (finance.type === 'income') {
-            totalIncome += finance.amount;
-        } else {
-            totalExpense += finance.amount;
+        body {
+            font-family: var(--font-body);
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
         }
-    });
 
-    // Hiển thị giao dịch mới nhất lên đầu
-    [...appData.financeItems].reverse().forEach(finance => {
-        const li = document.createElement('li');
-        li.className = `finance-item ${finance.type}`;
-        li.innerHTML = `
-            <div class="item-content">
-                <strong>${finance.description}</strong><br>
-                <small>📅 ${finance.date}</small>
+        #login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-blue), #003f6b);
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .login-box h2 {
+            font-family: var(--font-title);
+            color: var(--primary-blue);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .login-box .form-group { margin-bottom: 1.5rem; text-align: left; }
+        #login-error { color: var(--danger-color); margin-bottom: 1rem; font-weight: bold; display: none; }
+
+        #app-container { display: none; width: 100%; display: flex; }
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 1.5rem 1rem;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header { text-align: center; margin-bottom: 1rem; }
+        .profile-picture {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--white);
+            object-fit: cover;
+            margin-bottom: 0.5rem;
+            background-color: rgba(255,255,255,0.2);
+        }
+        .welcome-message { font-size: 0.95rem; color: var(--light-gray); line-height: 1.4; margin-bottom: 1rem; }
+
+        .info-widget {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .info-widget div { margin-bottom: 0.5rem; }
+        .info-widget span { font-weight: bold; }
+
+        .nav-menu { list-style: none; margin-bottom: 1rem; }
+        .nav-menu li { margin-bottom: 0.5rem; }
+
+        .nav-btn {
+            display: block; width: 100%; padding: 0.9rem 1rem; background: none; border: none;
+            color: var(--white); text-align: left; font-size: 1rem; font-family: var(--font-body);
+            border-radius: 8px; cursor: pointer; transition: background-color 0.3s, transform 0.2s;
+        }
+        .nav-btn:hover { background-color: rgba(255, 255, 255, 0.1); transform: translateX(5px); }
+        .nav-btn.active { background-color: var(--primary-orange); font-weight: bold; }
+        
+        .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); }
+        .data-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .sidebar-footer button {
+            width: 100%; margin-top: 0.5rem; padding: 0.8rem; border-radius: 8px;
+            cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: all 0.3s;
+        }
+        .import-btn { background-color: var(--primary-blue); color: var(--white); border: 2px solid var(--white); }
+        .import-btn:hover { background-color: rgba(255,255,255,0.1); }
+        .export-btn { background-color: var(--success-color); color: var(--white); border: 2px solid var(--success-color); }
+        .export-btn:hover { background-color: #218838; }
+        .logout-btn { background-color: transparent; color: var(--white); border: 2px solid var(--white); }
+        .logout-btn:hover { background-color: var(--danger-color); border-color: var(--danger-color); }
+
+        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 2rem; overflow-y: auto; }
+
+        .content-section { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 {
+            font-family: var(--font-title); color: var(--primary-blue); font-size: 2.5rem;
+            margin-bottom: 1.5rem; border-bottom: 3px solid var(--primary-orange); padding-bottom: 0.5rem;
+        }
+
+        .task-ticker {
+            background-color: #fff0f0;
+            color: var(--danger-color);
+            font-weight: bold;
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none; /* Ẩn mặc định */
+        }
+
+        .form-container { background-color: var(--white); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); margin-bottom: 2rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end; }
+        .form-group { display: flex; flex-direction: column; position: relative; }
+        .form-group label { margin-bottom: 0.5rem; font-weight: bold; color: var(--primary-blue); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.8rem; border: 1px solid var(--medium-gray); border-radius: 8px;
+            font-size: 1rem; font-family: var(--font-body); transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary-orange); box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.2);
+        }
+        .inline-error { color: var(--danger-color); font-size: 0.85rem; padding-top: 0.25rem; display: none; }
+        
+        textarea { resize: vertical; min-height: 80px; }
+        .btn-submit {
+            grid-column: 1 / -1; padding: 0.9rem; font-size: 1.1rem; font-weight: bold;
+            font-family: var(--font-title); background-color: var(--primary-orange); color: var(--white);
+            border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s, transform 0.2s, opacity 0.3s;
+        }
+        .btn-submit:hover { background-color: #e66a00; transform: translateY(-2px); }
+        .btn-submit:disabled { background-color: var(--medium-gray); cursor: not-allowed; transform: none; }
+
+        .list-container { margin-top: 2rem; }
+        .list-item {
+            background-color: var(--white); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07); border-left: 5px solid var(--primary-blue);
+            transition: box-shadow 0.3s, transform 0.3s, border-left-color 0.3s;
+        }
+        .list-item.due-soon { border-left-color: var(--due-soon-color); }
+        .list-item.overdue { border-left-color: var(--danger-color); }
+        .list-item:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .item-header h3 { font-size: 1.4rem; font-weight: bold; color: var(--primary-blue); word-break: break-word; }
+        .item-header h3 .due-warning { font-size: 1rem; color: var(--due-soon-color); margin-left: 0.5rem; }
+        .item-header h3 .overdue-warning { font-size: 1rem; color: var(--danger-color); margin-left: 0.5rem; }
+        .item-header.completed h3 { text-decoration: line-through; color: var(--dark-gray); }
+        .item-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+        .item-detail span { font-weight: bold; color: var(--dark-gray); display: block; margin-bottom: 0.25rem; font-size: 0.9rem; }
+        .item-detail p, .item-detail a { word-break: break-all; }
+        .category-tag {
+            color: var(--dark-gray); padding: 0.2rem 0.6rem; border-radius: 15px;
+            font-size: 0.85rem; font-weight: bold; display: inline-block;
+        }
+        .status { padding: 0.3rem 0.8rem; border-radius: 20px; color: var(--white); font-size: 0.9rem; font-weight: bold; text-align: center; display: inline-block; }
+        
+        .item-actions button {
+            background: none; border: 1px solid var(--medium-gray); border-radius: 6px; padding: 0.5rem 1rem;
+            margin-left: 0.5rem; cursor: pointer; transition: all 0.3s;
+        }
+        .item-actions .edit-btn:hover { background-color: var(--warning-color); border-color: var(--warning-color); color: var(--text-color); }
+        .item-actions .delete-btn:hover { background-color: var(--danger-color); border-color: var(--danger-color); color: var(--white); }
+        .item-actions .complete-btn:hover { background-color: var(--success-color); border-color: var(--success-color); color: var(--white); }
+        
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .settings-card { background-color: var(--white); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .settings-card h3 { color: var(--primary-blue); border-bottom: 2px solid var(--primary-orange); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        #profile-picture-settings { grid-column: 1 / -1; }
+        .profile-picture-controls { display: flex; align-items: center; gap: 1.5rem; }
+        .profile-picture-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--medium-gray); background-color: var(--light-gray); }
+
+        .settings-input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .settings-input-group input { flex-grow: 1; }
+        .settings-list { list-style: none; max-height: 200px; overflow-y: auto; }
+        .settings-list li { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid var(--medium-gray); }
+        .settings-list li button { background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 1.2rem; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); animation: fadeIn 0.3s; }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border-radius: 12px; width: 80%; max-width: 600px; position: relative; box-shadow: 0 5px 25px rgba(0,0,0,0.2); }
+        .close-btn { color: #aaa; position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover, .close-btn:focus { color: black; }
+        
+        #notification-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
+        .notification {
+            padding: 1rem 1.5rem; color: var(--white); border-radius: 8px; margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); animation: slideIn 0.5s, fadeOut 0.5s 2.5s;
+        }
+        .notification.success { background-color: var(--success-color); }
+        .notification.error { background-color: var(--danger-color); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        @media (max-width: 768px) {
+            #app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; flex-direction: row; align-items: center; padding: 1rem; flex-wrap: wrap; }
+            .sidebar-header { display: none; }
+            .info-widget { width: 100%; margin-bottom: 1rem; order: -1; }
+            .nav-menu { display: flex; flex-grow: 1; margin-bottom: 0; }
+            .sidebar-footer { display: flex; gap: 0.5rem; flex-wrap: wrap; width: 100%; }
+            .main-content { margin-left: 0; width: 100%; padding: 1rem; }
+            h1 { font-size: 2rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .item-header, .item-body { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .item-actions { margin-top: 1rem; width: 100%; display: flex; justify-content: flex-end; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-container">
+        <div class="login-box">
+            <h2>Đăng Nhập</h2>
+            <p id="login-error">Tên đăng nhập hoặc mật khẩu không đúng!</p>
+            <div class="form-group"><label for="username">Tên đăng nhập</label><input type="text" id="username" value="lamquocminh"></div>
+            <div class="form-group"><label for="password">Mật khẩu</label><input type="password" id="password" value="lamquocminh"></div>
+            <button class="btn-submit" onclick="handleLogin()">Đăng Nhập</button>
+        </div>
+    </div>
+    
+    <div id="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img id="sidebar-profile-pic" class="profile-picture" src="https://placehold.co/80x80/FFFFFF/005B96?text=User" alt="Ảnh đại diện">
+                <div class="welcome-message">Xin chào Lâm Quốc Minh,<br>chúc bạn một ngày vui vẻ!</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <span style="font-weight: bold; color: ${finance.type === 'income' ? 'var(--mau-thanh-cong-start)' : 'var(--mau-xoa-start)'}">
-                    ${finance.type === 'income' ? '+' : '-'} ${finance.amount.toLocaleString('vi-VN')} đ
-                </span>
-                <button class="btn-small btn-delete" onclick="deleteFinance(${finance.id})">🗑️</button>
+            <div class="info-widget">
+                <div id="current-time">--:--:--</div>
+                <div id="current-location">Đang xác định vị trí...</div>
             </div>
-        `;
-        list.appendChild(li);
-    });
-    
-    // Cập nhật tổng kết
-    const balance = totalIncome - totalExpense;
-    document.getElementById('totalIncome').textContent = totalIncome.toLocaleString('vi-VN') + ' đ';
-    document.getElementById('totalExpense').textContent = totalExpense.toLocaleString('vi-VN') + ' đ';
-    document.getElementById('balance').textContent = balance.toLocaleString('vi-VN') + ' đ';
-
-    // Cập nhật màu cho số dư
-    const balanceEl = document.getElementById('balance');
-    balanceEl.parentElement.className = 'summary-card'; // Reset
-    if (balance > 0) {
-        balanceEl.parentElement.classList.add('balance');
-    } else {
-        balanceEl.parentElement.classList.add('expense'); // Dùng màu đỏ nếu số dư âm
-    }
-}
-
-// --- QUẢN LÝ THÀNH TÍCH (ACHIEVEMENT) ---
-
-function addAchievement() {
-    const titleInput = document.getElementById('achievementTitle');
-    const dateInput = document.getElementById('achievementDate');
-    const descInput = document.getElementById('achievementDesc');
-    
-    const title = titleInput.value.trim();
-    const date = dateInput.value;
-    const desc = descInput.value.trim();
-    
-    if (title === '' || date === '') {
-        alert('Vui lòng nhập ít nhất tên thành tích và ngày!');
-        return;
-    }
-    
-    appData.achievements.push({
-        id: Date.now(),
-        title: title,
-        date: new Date(date).toLocaleDateString('vi-VN'),
-        description: desc
-    });
-    
-    saveDataToStorage();
-    renderAchievements();
-    
-    titleInput.value = '';
-    dateInput.value = '';
-    descInput.value = '';
-}
-
-function deleteAchievement(id) {
-    appData.achievements = appData.achievements.filter(item => item.id !== id);
-    saveDataToStorage();
-    renderAchievements();
-}
-
-function renderAchievements() {
-    const list = document.getElementById('achievementList');
-    list.innerHTML = '';
-    
-    // Sắp xếp thành tích theo ngày mới nhất
-    const sortedAchievements = [...appData.achievements].sort((a, b) => new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-')));
-    
-    sortedAchievements.forEach(achievement => {
-        const card = document.createElement('div');
-        card.className = 'card-item';
-        card.innerHTML = `
-            <h3>🏆 ${achievement.title}</h3>
-            ${achievement.description ? `<p>${achievement.description.replace(/\n/g, '<br>')}</p>` : ''}
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="date">📅 ${achievement.date}</span>
-                <button class="btn-small btn-delete" onclick="deleteAchievement(${achievement.id})">🗑️ Xóa</button>
+            <ul class="nav-menu">
+                <li><button class="nav-btn active" onclick="showSection('tasks')">Quản lý công việc</button></li>
+                <li><button class="nav-btn" onclick="showSection('goals')">Quản lý mục tiêu</button></li>
+                <li><button class="nav-btn" onclick="showSection('settings')">Cài đặt Tùy chỉnh</button></li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="data-actions">
+                    <button class="import-btn" onclick="importDataFromFile()">Nhập Dữ Liệu</button>
+                    <button class="export-btn" onclick="exportDataToFile()">Xuất Dữ Liệu</button>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Đăng xuất</button>
             </div>
-        `;
-        list.appendChild(card);
-    });
-}
+        </aside>
 
+        <main class="main-content">
+            <section id="tasks" class="content-section active">
+                <h1>Quản lý công việc</h1>
+                <marquee class="task-ticker" scrollamount="5"></marquee>
+                <div class="form-container">
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="task-name">Tên công việc</label>
+                            <input type="text" id="task-name" placeholder="Nhập tên công việc...">
+                            <p class="inline-error" id="task-name-error"></p>
+                        </div>
+                        <div class="form-group"><label for="task-category">Phân loại</label><select id="task-category"></select></div>
+                        <div class="form-group"><label for="task-due-date">Hạn chót</label><input type="text" id="task-due-date" placeholder="dd/mm/yyyy"></div>
+                        <div class="form-group"><label for="task-status">Tiến độ</label><select id="task-status"></select></div>
+                        <div class="form-group"><label for="task-link">Đính kèm</label><input type="text" id="task-link" placeholder="https://..."></div>
+                    </div>
+                    <button id="add-task-btn" class="btn-submit" onclick="addTask()">Thêm công việc</button>
+                </div>
+                <div class="list-container" id="task-list"></div>
+            </section>
+            
+            <section id="goals" class="content-section">
+                <h1>Quản lý mục tiêu</h1>
+                <div class="form-container">
+                    <div class="form-grid">
+                         <div class="form-group" style="grid-column: 1 / -1;"><label for="goal-name">Mục tiêu</label><input type="text" id="goal-name" placeholder="Nhập tên mục tiêu..."></div>
+                        <div class="form-group" style="grid-column: 1 / -1;"><label for="goal-conditions">Việc cần làm</label><textarea id="goal-conditions" placeholder="Nhập các bước cần làm..."></textarea></div>
+                        <div class="form-group" style="grid-column: 1 / -1;"><label for="goal-link">Đính kèm</label><input type="text" id="goal-link" placeholder="https://..."></div>
+                    </div>
+                    <button class="btn-submit" onclick="addGoal()">Thêm mục tiêu</button>
+                </div>
+                <div class="list-container" id="goal-list"></div>
+            </section>
+            
+            <section id="settings" class="content-section">
+                <h1>Cài đặt Tùy chỉnh</h1>
+                <p style="margin-bottom: 2rem; color: var(--dark-gray);">Tại đây, bạn có thể tùy chỉnh các lựa chọn và thông tin cá nhân.</p>
+                <div class="settings-grid">
+                     <div class="settings-card" id="profile-picture-settings">
+                        <h3>Ảnh Đại Diện</h3>
+                        <div class="profile-picture-controls">
+                            <img id="profile-pic-preview" class="profile-picture-preview" src="https://placehold.co/100x100/E9ECEF/6C757D?text=Avatar" alt="Xem trước ảnh">
+                            <div>
+                                <button class="btn-submit" style="padding: 0.5rem 1rem; margin-bottom: 0.5rem;" onclick="document.getElementById('profile-pic-input').click()">Chọn ảnh mới</button>
+                                <p style="font-size: 0.85rem; color: var(--dark-gray);">Chọn ảnh từ máy tính của bạn.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-card" id="categories-settings">
+                        <h3>Phân loại Công việc</h3>
+                        <div class="settings-input-group"><input type="text" id="new-category" placeholder="Tên loại mới..."><button class="btn-submit" style="padding: 0.5rem 1rem;" onclick="addSettingItem('categories', 'new-category')">Thêm</button></div>
+                        <ul class="settings-list"></ul>
+                    </div>
+                    <div class="settings-card" id="statuses-settings">
+                        <h3>Trạng thái Tiến độ</h3>
+                        <div class="settings-input-group"><input type="text" id="new-status" placeholder="Tên trạng thái mới..."><button class="btn-submit" style="padding: 0.5rem 1rem;" onclick="addSettingItem('statuses', 'new-status')">Thêm</button></div>
+                        <ul class="settings-list"></ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
-// --- KHỞI TẠO ỨNG DỤNG ---
-// Hàm này sẽ được chạy khi toàn bộ trang đã được tải xong.
-document.addEventListener('DOMContentLoaded', function() {
-    loadDataFromStorage(); // Tải dữ liệu từ localStorage
-    
-    // Hiển thị tất cả các danh sách với dữ liệu đã tải
-    renderWork();
-    renderData();
-    renderFinance();
-    renderAchievements();
-});
+    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+    <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
+    <div id="edit-modal" class="modal"><div class="modal-content"><span class="close-btn" onclick="closeModal()">&times;</span><h2>Chỉnh sửa</h2><div id="edit-modal-body"></div></div></div>
+    <div id="notification-container"></div>
+
+    <script>
+        // --- KHAI BÁO BIẾN TOÀN CỤC ---
+        let tasks = [];
+        let goals = [];
+        let settings = {};
+        let editingItemId = null;
+
+        // --- CÁC HÀM XỬ LÝ ĐĂNG NHẬP & GIAO DIỆN ---
+        function handleLogin() {
+            const user = document.getElementById('username').value, pass = document.getElementById('password').value, errorEl = document.getElementById('login-error');
+            if (user === 'lamquocminh' && pass === 'lamquocminh') {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                showApp();
+                errorEl.style.display = 'none';
+            } else { errorEl.style.display = 'block'; }
+        }
+        function handleLogout() { sessionStorage.removeItem('isLoggedIn'); showLoginScreen(); }
+        function showApp() { document.getElementById('login-container').style.display = 'none'; document.getElementById('app-container').style.display = 'flex'; loadAllData(); }
+        function showLoginScreen() { document.getElementById('login-container').style.display = 'flex'; document.getElementById('app-container').style.display = 'none'; }
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // --- CÁC HÀM TIỆN ÍCH ---
+        function updateTime() {
+            const timeEl = document.getElementById('current-time');
+            if (timeEl) timeEl.innerHTML = `<span>🕒</span> ${new Date().toLocaleTimeString('vi-VN')}`;
+        }
+        async function getLocation() {
+            const locEl = document.getElementById('current-location');
+            if (!locEl || !navigator.geolocation) return;
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const data = await response.json();
+                    const address = data.address;
+                    const displayLocation = `${address.city || address.town || address.village}, ${address.country}`;
+                    locEl.innerHTML = `<span>📍</span> ${displayLocation}`;
+                } catch (error) { locEl.textContent = "Không thể lấy tên vị trí."; }
+            }, () => { locEl.textContent = "Vui lòng cho phép truy cập vị trí."; });
+        }
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notification-container');
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.textContent = message;
+            container.appendChild(notif);
+            setTimeout(() => { notif.remove(); }, 3000);
+        }
+        function stringToHslColor(str, s = 60, l = 85) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const h = hash % 360;
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        // --- HÀM HỖ TRỢ XỬ LÝ NGÀY THÁNG ---
+        function formatISOToVietnamese(isoDate) {
+            if (!isoDate || typeof isoDate !== 'string') return '';
+            const [year, month, day] = isoDate.split('-');
+            if (!year || !month || !day) return '';
+            return `${day}/${month}/${year}`;
+        }
+
+        function parseVietnameseToISO(vietnameseDate) {
+            if (!vietnameseDate || typeof vietnameseDate !== 'string') return '';
+            const parts = vietnameseDate.split('/');
+            if (parts.length !== 3) return '';
+            
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+
+            if (isNaN(day) || isNaN(month) || isNaN(year) || year < 2025) {
+                return ''; // Trả về rỗng nếu không hợp lệ hoặc năm nhỏ hơn 2025
+            }
+            return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+        
+        // --- CÁC HÀM XỬ LÝ DỮ LIỆU ---
+        function saveAllData() { localStorage.setItem('personalManagerData', JSON.stringify({ tasks, goals, settings })); }
+        function loadAllData() {
+            const savedData = JSON.parse(localStorage.getItem('personalManagerData'));
+            const defaultSettings = {
+                categories: ['Cá nhân', 'Công việc', 'Học tập'],
+                statuses: ['Chưa thực hiện', 'Đang thực hiện', 'Đã hoàn thành'],
+            };
+            settings = (savedData && savedData.settings) ? savedData.settings : defaultSettings;
+            tasks = (savedData && savedData.tasks) ? savedData.tasks : [];
+            goals = (savedData && savedData.goals) ? savedData.goals : [];
+            loadProfilePicture();
+            renderAll();
+        }
+        function exportDataToFile() {
+            const dataStr = JSON.stringify({ tasks, goals, settings }, null, 2); 
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `DuLieu-QuanLy-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        function importDataFromFile() { document.getElementById('import-file-input').click(); }
+
+        // --- QUẢN LÝ ẢNH ĐẠI DIỆN ---
+        function loadProfilePicture() {
+            const savedPic = localStorage.getItem('profilePicture');
+            if (savedPic) {
+                document.getElementById('sidebar-profile-pic').src = savedPic;
+                document.getElementById('profile-pic-preview').src = savedPic;
+            }
+        }
+        function handleProfilePictureUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                localStorage.setItem('profilePicture', e.target.result);
+                loadProfilePicture();
+                showNotification('Cập nhật ảnh đại diện thành công!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- QUẢN LÝ CÀI ĐẶT ---
+        function renderSettings() {
+            ['categories', 'statuses'].forEach(key => {
+                const container = document.getElementById(`${key}-settings`);
+                if(container) {
+                    const listEl = container.querySelector('.settings-list');
+                    listEl.innerHTML = settings[key].map((item, index) => `<li>${item} <button onclick="deleteSettingItem('${key}', ${index})">&times;</button></li>`).join('');
+                }
+            });
+            populateSelectOptions();
+        }
+        function addSettingItem(key, inputId) {
+            const inputEl = document.getElementById(inputId);
+            const value = inputEl.value.trim();
+            if (value && !settings[key].includes(value)) {
+                settings[key].push(value);
+                inputEl.value = '';
+                saveAllData();
+                renderSettings();
+            }
+        }
+        function deleteSettingItem(key, index) { settings[key].splice(index, 1); saveAllData(); renderSettings(); }
+        function populateSelectOptions() {
+            document.getElementById('task-category').innerHTML = settings.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            document.getElementById('task-status').innerHTML = settings.statuses.map(s => `<option value="${s}">${s}</option>`).join('');
+        }
+
+        // --- QUẢN LÝ CÔNG VIỆC ---
+        function addTask() {
+            const taskNameInput = document.getElementById('task-name');
+            const name = taskNameInput.value.trim();
+            if (!name) { 
+                const errorEl = document.getElementById('task-name-error');
+                errorEl.textContent = 'Tên công việc không được để trống.';
+                errorEl.style.display = 'block';
+                return;
+            }
+            tasks.push({
+                id: Date.now(), name,
+                category: document.getElementById('task-category').value,
+                dueDate: parseVietnameseToISO(document.getElementById('task-due-date').value),
+                status: document.getElementById('task-status').value,
+                link: document.getElementById('task-link').value.trim(),
+                completionDate: null
+            });
+            saveAllData(); 
+            renderTasks();
+            
+            taskNameInput.value = '';
+            document.getElementById('task-link').value = '';
+            document.getElementById('add-task-btn').disabled = true;
+            taskNameInput.focus();
+            showNotification('Thêm công việc thành công!');
+        }
+        function deleteTask(id) { tasks = tasks.filter(task => task.id !== id); saveAllData(); renderTasks(); }
+        function completeTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                const completedStatus = settings.statuses[settings.statuses.length -1];
+                task.status = completedStatus;
+                task.completionDate = new Date().toISOString();
+                saveAllData();
+                renderTasks();
+            }
+        }
+        
+        function updateTaskTicker() {
+            const tickerEl = document.querySelector('.task-ticker');
+            if (!tickerEl) return;
+
+            const completedStatus = settings.statuses[settings.statuses.length - 1];
+            const unfinishedTasks = tasks.filter(task => task.status !== completedStatus);
+
+            if (unfinishedTasks.length > 0) {
+                const taskNames = unfinishedTasks.map(task => task.name).join('  •  ');
+                tickerEl.textContent = "Công việc chưa xong: " + taskNames;
+                tickerEl.style.display = 'block';
+                tickerEl.style.backgroundColor = '#fff0f0';
+                tickerEl.style.color = 'var(--danger-color)';
+            } else {
+                tickerEl.textContent = '🎉 Chúc mừng! Tất cả công việc đã được hoàn thành!';
+                tickerEl.style.display = 'block';
+                tickerEl.style.backgroundColor = '#f0fff0';
+                tickerEl.style.color = 'var(--success-color)';
+            }
+        }
+
+        function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            if (tasks.length === 0) { taskList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có công việc nào.</p>'; updateTaskTicker(); return; }
+
+            const today = new Date(); today.setHours(0,0,0,0);
+            tasks.sort((a, b) => (a.dueDate && b.dueDate) ? new Date(a.dueDate) - new Date(b.dueDate) : a.dueDate ? -1 : 1);
+
+            taskList.innerHTML = tasks.map(task => {
+                let dueDateWarning = '';
+                let itemClass = '';
+                const completedStatus = settings.statuses[settings.statuses.length - 1];
+                let isCompleted = task.status === completedStatus;
+
+                if (task.dueDate && !isCompleted) {
+                    const diffDays = Math.ceil((new Date(task.dueDate) - today) / (1000 * 60 * 60 * 24));
+                    if (diffDays < 0) { 
+                        dueDateWarning = `<span class="overdue-warning">⚠️ Quá hạn ${Math.abs(diffDays)} ngày</span>`; 
+                        itemClass = 'overdue';
+                    }
+                    else if (diffDays <= 3) { 
+                        dueDateWarning = `<span class="due-warning">⚠️ Sắp hết hạn (còn ${diffDays} ngày)</span>`; 
+                        itemClass = 'due-soon';
+                    }
+                }
+                
+                const statusIndex = settings.statuses.indexOf(task.status);
+                let statusColor = 'var(--dark-gray)';
+                if (statusIndex === settings.statuses.length - 1) {
+                    statusColor = 'var(--success-color)';
+                } else if (statusIndex > 0) {
+                    statusColor = 'var(--warning-color)';
+                }
+
+                const categoryColor = stringToHslColor(task.category);
+                
+                const completionDateHtml = isCompleted && task.completionDate 
+                    ? `<div class="item-detail"><span>Ngày hoàn thành</span><p>${formatISOToVietnamese(task.completionDate.slice(0,10))}</p></div>`
+                    : '';
+
+                return `<div class="list-item ${itemClass}">
+                    <div class="item-header ${isCompleted ? 'completed' : ''}">
+                        <h3>${task.name} ${dueDateWarning}</h3>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="openEditModal('task', ${task.id})">Sửa</button>
+                            <button class="delete-btn" onclick="deleteTask(${task.id})">Xóa</button>
+                            ${!isCompleted ? `<button class="complete-btn" onclick="completeTask(${task.id})">Hoàn thành</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="item-body">
+                        <div class="item-detail"><span>Phân loại</span><p><span class="category-tag" style="background-color: ${categoryColor};">${task.category}</span></p></div>
+                        <div class="item-detail"><span>Hạn chót</span><p>${formatISOToVietnamese(task.dueDate) || 'Chưa có'}</p></div>
+                        <div class="item-detail"><span>Tiến độ</span><p><span class="status" style="background-color: ${statusColor}; color: ${statusIndex > 0 && statusIndex < settings.statuses.length -1 ? 'var(--text-color)' : 'var(--white)'}">${task.status}</span></p></div>
+                        ${completionDateHtml}
+                        <div class="item-detail"><span>Đính kèm</span><p>${task.link ? `<a href="${task.link}" target="_blank">${task.link}</a>` : 'Không có'}</p></div>
+                    </div>
+                </div>`;
+            }).join('');
+            updateTaskTicker();
+        }
+
+        // --- QUẢN LÝ MỤC TIÊU ---
+        function addGoal() {
+            const name = document.getElementById('goal-name').value.trim();
+            if (!name) { showNotification('Vui lòng nhập tên mục tiêu.', 'error'); return; }
+            goals.push({ id: Date.now(), name, conditions: document.getElementById('goal-conditions').value.trim(), link: document.getElementById('goal-link').value.trim(), completed: false });
+            saveAllData(); renderGoals();
+            document.getElementById('goal-name').value = ''; document.getElementById('goal-conditions').value = ''; document.getElementById('goal-link').value = '';
+            showNotification('Thêm mục tiêu thành công!');
+        }
+        function deleteGoal(id) { goals = goals.filter(g => g.id !== id); saveAllData(); renderGoals(); }
+        function toggleGoalCompletion(id) { const g = goals.find(g => g.id === id); if (g) { g.completed = !g.completed; saveAllData(); renderGoals(); } }
+        function renderGoals() {
+            const goalList = document.getElementById('goal-list');
+            if (goals.length === 0) { goalList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có mục tiêu nào.</p>'; return; }
+            goalList.innerHTML = goals.map(goal => `
+                <div class="list-item">
+                    <div class="item-header ${goal.completed ? 'completed' : ''}"><h3>${goal.name}</h3>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="openEditModal('goal', ${goal.id})">Sửa</button>
+                            <button class="delete-btn" onclick="deleteGoal(${goal.id})">Xóa</button>
+                            <button class="complete-btn" onclick="toggleGoalCompletion(${goal.id})">${goal.completed ? 'Bỏ hoàn thành' : 'Hoàn thành'}</button>
+                        </div>
+                    </div>
+                    <div class="item-body" style="grid-template-columns: 1fr;">
+                        <div class="item-detail"><span>Việc cần làm</span><p style="white-space: pre-wrap;">${goal.conditions || 'N/A'}</p></div>
+                        <div class="item-detail"><span>Đính kèm</span><p>${goal.link ? `<a href="${goal.link}" target="_blank">${goal.link}</a>` : 'N/A'}</p></div>
+                    </div>
+                </div>`).join('');
+        }
+        
+        // --- MODAL CHỈNH SỬA ---
+        function openEditModal(type, id) {
+            editingItemId = id;
+            const body = document.getElementById('edit-modal-body');
+            if (type === 'task') {
+                const t = tasks.find(i => i.id === id);
+                const cats = settings.categories.map(c => `<option value="${c}" ${t.category === c ? 'selected':''}>${c}</option>`).join('');
+                const stats = settings.statuses.map(s => `<option value="${s}" ${t.status === s ? 'selected':''}>${s}</option>`).join('');
+                body.innerHTML = `<div class="form-group"><label>Tên</label><input id="edit-task-name" value="${t.name}"></div> <div class="form-group"><label>Phân loại</label><select id="edit-task-category">${cats}</select></div> <div class="form-group"><label>Hạn chót</label><input type="text" id="edit-task-due-date" placeholder="dd/mm/yyyy" value="${formatISOToVietnamese(t.dueDate)}"></div> <div class="form-group"><label>Tiến độ</label><select id="edit-task-status">${stats}</select></div> <div class="form-group"><label>Đính kèm</label><input id="edit-task-link" value="${t.link}"></div> <button class="btn-submit" onclick="saveTaskChanges()">Lưu</button>`;
+            } else if (type === 'goal') {
+                const g = goals.find(i => i.id === id);
+                body.innerHTML = `<div class="form-group"><label>Mục tiêu</label><input id="edit-goal-name" value="${g.name}"></div> <div class="form-group"><label>Việc cần làm</label><textarea id="edit-goal-conditions">${g.conditions}</textarea></div> <div class="form-group"><label>Đính kèm</label><input id="edit-goal-link" value="${g.link}"></div> <button class="btn-submit" onclick="saveGoalChanges()">Lưu</button>`;
+            }
+            document.getElementById('edit-modal').style.display = 'block';
+        }
+        function closeModal() { document.getElementById('edit-modal').style.display = 'none'; editingItemId = null; }
+        function saveTaskChanges() {
+            const t = tasks.find(i => i.id === editingItemId);
+            if (t) {
+                t.name = document.getElementById('edit-task-name').value.trim();
+                t.category = document.getElementById('edit-task-category').value;
+                t.dueDate = parseVietnameseToISO(document.getElementById('edit-task-due-date').value.trim());
+                t.status = document.getElementById('edit-task-status').value;
+                t.link = document.getElementById('edit-task-link').value.trim();
+                if (t.status === settings.statuses[settings.statuses.length - 1] && !t.completionDate) {
+                    t.completionDate = new Date().toISOString();
+                }
+                saveAllData(); renderTasks(); closeModal();
+            }
+        }
+        function saveGoalChanges() {
+            const g = goals.find(i => i.id === editingItemId);
+            if (g) {
+                g.name = document.getElementById('edit-goal-name').value.trim();
+                g.conditions = document.getElementById('edit-goal-conditions').value.trim();
+                g.link = document.getElementById('edit-goal-link').value.trim();
+                saveAllData();
+                renderGoals();
+                closeModal();
+            }
+        }
+        
+        function renderAll() { renderTasks(); renderGoals(); renderSettings(); }
+
+        // --- KHỞI CHẠY ỨNG DỤNG ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') { showApp(); } 
+            else { showLoginScreen(); }
+            setInterval(updateTime, 1000);
+            getLocation();
+            
+            const taskNameInput = document.getElementById('task-name');
+            const addTaskBtn = document.getElementById('add-task-btn');
+            
+            const today = new Date();
+            const year = today.getFullYear();
+            const defaultDate = year < 2025 ? new Date('2025-01-01T00:00:00') : today;
+            document.getElementById('task-due-date').value = formatISOToVietnamese(defaultDate.toISOString().slice(0,10));
+            
+            addTaskBtn.disabled = true;
+            taskNameInput.addEventListener('input', () => {
+                const errorEl = document.getElementById('task-name-error');
+                if (taskNameInput.value.trim()) {
+                    addTaskBtn.disabled = false;
+                    errorEl.style.display = 'none';
+                } else {
+                    addTaskBtn.disabled = true;
+                }
+            });
+
+            taskNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !addTaskBtn.disabled) {
+                    addTask();
+                }
+            });
+
+            document.getElementById('import-file-input').addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data && typeof data === 'object') {
+                            tasks = data.tasks || [];
+                            goals = data.goals || [];
+                            settings = data.settings || {};
+                            saveAllData();
+                            renderAll();
+                            showNotification('Nhập dữ liệu thành công!');
+                        } else { showNotification('Lỗi: File không hợp lệ.', 'error'); }
+                    } catch (error) { showNotification('Lỗi: Không thể đọc file JSON.', 'error'); }
+                    event.target.value = '';
+                };
+                reader.readAsText(file);
+            });
+            document.getElementById('profile-pic-input').addEventListener('change', handleProfilePictureUpload);
+        });
+        
+        document.getElementById('password').addEventListener('keyup', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleLogin(); } });
+        window.onclick = (e) => { if (e.target.id == 'edit-modal') closeModal(); }
+    </script>
+</body>
+</html>
+
