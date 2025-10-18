@@ -1,29 +1,69 @@
-// Khởi tạo dữ liệu từ localStorage
-let workItems = JSON.parse(localStorage.getItem('workItems')) || [];
-let dataItems = JSON.parse(localStorage.getItem('dataItems')) || [];
-let financeItems = JSON.parse(localStorage.getItem('financeItems')) || [];
-let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+// --- QUẢN LÝ DỮ LIỆU TRUNG TÂM ---
+// Tất cả dữ liệu của ứng dụng sẽ được lưu trong đối tượng này.
+const appData = {
+    workItems: [],
+    dataItems: [],
+    financeItems: [],
+    achievements: []
+};
 
-// Hàm chuyển đổi giữa các phần
+// --- CÁC HÀM XỬ LÝ CHUNG ---
+
+/**
+ * Hiển thị một mục (section) và ẩn các mục khác.
+ * @param {string} sectionId - ID của section cần hiển thị.
+ */
 function showSection(sectionId) {
-    // Ẩn tất cả các phần
+    // Ẩn tất cả các phần nội dung
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
     });
     
-    // Bỏ active khỏi tất cả nút
+    // Bỏ trạng thái 'active' khỏi tất cả các nút điều hướng
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    // Hiển thị phần được chọn
+    // Hiển thị section được chọn
     document.getElementById(sectionId).classList.add('active');
     
-    // Thêm active cho nút được chọn
+    // Thêm trạng thái 'active' cho nút được nhấn
     event.target.classList.add('active');
 }
 
-// ========== QUẢN LÝ CÔNG VIỆC ==========
+/**
+ * Lưu toàn bộ dữ liệu ứng dụng vào localStorage.
+ * Bọc trong try...catch để xử lý trường hợp trình duyệt chặn localStorage.
+ */
+function saveDataToStorage() {
+    try {
+        localStorage.setItem('personalManagerData', JSON.stringify(appData));
+    } catch (e) {
+        console.error("Lỗi khi lưu dữ liệu vào localStorage:", e);
+        // Có thể hiển thị một thông báo cho người dùng ở đây nếu cần.
+    }
+}
+
+/**
+ * Tải toàn bộ dữ liệu từ localStorage khi ứng dụng khởi động.
+ */
+function loadDataFromStorage() {
+    try {
+        const savedData = JSON.parse(localStorage.getItem('personalManagerData'));
+        if (savedData) {
+            // Gán dữ liệu đã lưu vào đối tượng appData
+            appData.workItems = savedData.workItems || [];
+            appData.dataItems = savedData.dataItems || [];
+            appData.financeItems = savedData.financeItems || [];
+            appData.achievements = savedData.achievements || [];
+        }
+    } catch (e) {
+        console.error("Lỗi khi tải dữ liệu từ localStorage:", e);
+    }
+}
+
+// --- QUẢN LÝ CÔNG VIỆC (WORK) ---
+
 function addWork() {
     const input = document.getElementById('workInput');
     const text = input.value.trim();
@@ -33,42 +73,38 @@ function addWork() {
         return;
     }
     
-    const work = {
+    appData.workItems.push({
         id: Date.now(),
         text: text,
         completed: false
-    };
+    });
     
-    workItems.push(work);
-    saveWork();
+    saveDataToStorage();
     renderWork();
     input.value = '';
+    input.focus();
 }
 
 function toggleWork(id) {
-    const work = workItems.find(item => item.id === id);
+    const work = appData.workItems.find(item => item.id === id);
     if (work) {
         work.completed = !work.completed;
-        saveWork();
+        saveDataToStorage();
         renderWork();
     }
 }
 
 function deleteWork(id) {
-    workItems = workItems.filter(item => item.id !== id);
-    saveWork();
+    appData.workItems = appData.workItems.filter(item => item.id !== id);
+    saveDataToStorage();
     renderWork();
-}
-
-function saveWork() {
-    localStorage.setItem('workItems', JSON.stringify(workItems));
 }
 
 function renderWork() {
     const list = document.getElementById('workList');
     list.innerHTML = '';
     
-    workItems.forEach(work => {
+    appData.workItems.forEach(work => {
         const li = document.createElement('li');
         li.className = work.completed ? 'completed' : '';
         li.innerHTML = `
@@ -84,7 +120,8 @@ function renderWork() {
     });
 }
 
-// ========== QUẢN LÝ DỮ LIỆU ==========
+// --- QUẢN LÝ DỮ LIỆU (DATA) ---
+
 function addData() {
     const titleInput = document.getElementById('dataTitle');
     const contentInput = document.getElementById('dataContent');
@@ -97,40 +134,36 @@ function addData() {
         return;
     }
     
-    const data = {
+    appData.dataItems.push({
         id: Date.now(),
         title: title,
         content: content,
         date: new Date().toLocaleDateString('vi-VN')
-    };
+    });
     
-    dataItems.push(data);
-    saveData();
+    saveDataToStorage();
     renderData();
     titleInput.value = '';
     contentInput.value = '';
 }
 
 function deleteData(id) {
-    dataItems = dataItems.filter(item => item.id !== id);
-    saveData();
+    appData.dataItems = appData.dataItems.filter(item => item.id !== id);
+    saveDataToStorage();
     renderData();
-}
-
-function saveData() {
-    localStorage.setItem('dataItems', JSON.stringify(dataItems));
 }
 
 function renderData() {
     const list = document.getElementById('dataList');
     list.innerHTML = '';
     
-    dataItems.forEach(data => {
+    // Hiển thị dữ liệu mới nhất lên đầu
+    [...appData.dataItems].reverse().forEach(data => {
         const card = document.createElement('div');
         card.className = 'card-item';
         card.innerHTML = `
             <h3>${data.title}</h3>
-            <p>${data.content}</p>
+            <p>${data.content.replace(/\n/g, '<br>')}</p>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="date">📅 ${data.date}</span>
                 <button class="btn-small btn-delete" onclick="deleteData(${data.id})">🗑️ Xóa</button>
@@ -140,41 +173,40 @@ function renderData() {
     });
 }
 
-// ========== QUẢN LÝ TÀI CHÍNH ==========
+// --- QUẢN LÝ TÀI CHÍNH (FINANCE) ---
+
 function addFinance() {
     const type = document.getElementById('financeType').value;
-    const desc = document.getElementById('financeDesc').value.trim();
-    const amount = parseFloat(document.getElementById('financeAmount').value);
+    const descInput = document.getElementById('financeDesc');
+    const amountInput = document.getElementById('financeAmount');
+    
+    const desc = descInput.value.trim();
+    const amount = parseFloat(amountInput.value);
     
     if (desc === '' || isNaN(amount) || amount <= 0) {
         alert('Vui lòng nhập đầy đủ thông tin hợp lệ!');
         return;
     }
     
-    const finance = {
+    appData.financeItems.push({
         id: Date.now(),
         type: type,
         description: desc,
         amount: amount,
         date: new Date().toLocaleDateString('vi-VN')
-    };
+    });
     
-    financeItems.push(finance);
-    saveFinance();
+    saveDataToStorage();
     renderFinance();
     
-    document.getElementById('financeDesc').value = '';
-    document.getElementById('financeAmount').value = '';
+    descInput.value = '';
+    amountInput.value = '';
 }
 
 function deleteFinance(id) {
-    financeItems = financeItems.filter(item => item.id !== id);
-    saveFinance();
+    appData.financeItems = appData.financeItems.filter(item => item.id !== id);
+    saveDataToStorage();
     renderFinance();
-}
-
-function saveFinance() {
-    localStorage.setItem('financeItems', JSON.stringify(financeItems));
 }
 
 function renderFinance() {
@@ -184,13 +216,16 @@ function renderFinance() {
     let totalIncome = 0;
     let totalExpense = 0;
     
-    financeItems.forEach(finance => {
+    appData.financeItems.forEach(finance => {
         if (finance.type === 'income') {
             totalIncome += finance.amount;
         } else {
             totalExpense += finance.amount;
         }
-        
+    });
+
+    // Hiển thị giao dịch mới nhất lên đầu
+    [...appData.financeItems].reverse().forEach(finance => {
         const li = document.createElement('li');
         li.className = `finance-item ${finance.type}`;
         li.innerHTML = `
@@ -199,7 +234,7 @@ function renderFinance() {
                 <small>📅 ${finance.date}</small>
             </div>
             <div style="display: flex; align-items: center; gap: 15px;">
-                <span style="font-weight: bold; color: ${finance.type === 'income' ? '#28a745' : '#dc3545'}">
+                <span style="font-weight: bold; color: ${finance.type === 'income' ? 'var(--mau-thanh-cong-start)' : 'var(--mau-xoa-start)'}">
                     ${finance.type === 'income' ? '+' : '-'} ${finance.amount.toLocaleString('vi-VN')} đ
                 </span>
                 <button class="btn-small btn-delete" onclick="deleteFinance(${finance.id})">🗑️</button>
@@ -209,12 +244,23 @@ function renderFinance() {
     });
     
     // Cập nhật tổng kết
+    const balance = totalIncome - totalExpense;
     document.getElementById('totalIncome').textContent = totalIncome.toLocaleString('vi-VN') + ' đ';
     document.getElementById('totalExpense').textContent = totalExpense.toLocaleString('vi-VN') + ' đ';
-    document.getElementById('balance').textContent = (totalIncome - totalExpense).toLocaleString('vi-VN') + ' đ';
+    document.getElementById('balance').textContent = balance.toLocaleString('vi-VN') + ' đ';
+
+    // Cập nhật màu cho số dư
+    const balanceEl = document.getElementById('balance');
+    balanceEl.parentElement.className = 'summary-card'; // Reset
+    if (balance > 0) {
+        balanceEl.parentElement.classList.add('balance');
+    } else {
+        balanceEl.parentElement.classList.add('expense'); // Dùng màu đỏ nếu số dư âm
+    }
 }
 
-// ========== QUẢN LÝ THÀNH TÍCH ==========
+// --- QUẢN LÝ THÀNH TÍCH (ACHIEVEMENT) ---
+
 function addAchievement() {
     const titleInput = document.getElementById('achievementTitle');
     const dateInput = document.getElementById('achievementDate');
@@ -229,15 +275,14 @@ function addAchievement() {
         return;
     }
     
-    const achievement = {
+    appData.achievements.push({
         id: Date.now(),
         title: title,
         date: new Date(date).toLocaleDateString('vi-VN'),
         description: desc
-    };
+    });
     
-    achievements.push(achievement);
-    saveAchievements();
+    saveDataToStorage();
     renderAchievements();
     
     titleInput.value = '';
@@ -246,25 +291,24 @@ function addAchievement() {
 }
 
 function deleteAchievement(id) {
-    achievements = achievements.filter(item => item.id !== id);
-    saveAchievements();
+    appData.achievements = appData.achievements.filter(item => item.id !== id);
+    saveDataToStorage();
     renderAchievements();
-}
-
-function saveAchievements() {
-    localStorage.setItem('achievements', JSON.stringify(achievements));
 }
 
 function renderAchievements() {
     const list = document.getElementById('achievementList');
     list.innerHTML = '';
     
-    achievements.forEach(achievement => {
+    // Sắp xếp thành tích theo ngày mới nhất
+    const sortedAchievements = [...appData.achievements].sort((a, b) => new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-')));
+    
+    sortedAchievements.forEach(achievement => {
         const card = document.createElement('div');
         card.className = 'card-item';
         card.innerHTML = `
             <h3>🏆 ${achievement.title}</h3>
-            ${achievement.description ? `<p>${achievement.description}</p>` : ''}
+            ${achievement.description ? `<p>${achievement.description.replace(/\n/g, '<br>')}</p>` : ''}
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="date">📅 ${achievement.date}</span>
                 <button class="btn-small btn-delete" onclick="deleteAchievement(${achievement.id})">🗑️ Xóa</button>
@@ -274,11 +318,15 @@ function renderAchievements() {
     });
 }
 
-// Khởi tạo trang khi load
+
+// --- KHỞI TẠO ỨNG DỤNG ---
+// Hàm này sẽ được chạy khi toàn bộ trang đã được tải xong.
 document.addEventListener('DOMContentLoaded', function() {
+    loadDataFromStorage(); // Tải dữ liệu từ localStorage
+    
+    // Hiển thị tất cả các danh sách với dữ liệu đã tải
     renderWork();
     renderData();
     renderFinance();
     renderAchievements();
 });
-
