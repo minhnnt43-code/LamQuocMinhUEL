@@ -104,3 +104,9 @@ temp/
 # Backup files
 *.bak
 *.backup
+
+# Legacy files (not needed for GitHub)
+script.js
+style.css
+XEM_TRUOC_GIAO_DIEN.txt
+HUONG_DAN_SU_DUNG.txt

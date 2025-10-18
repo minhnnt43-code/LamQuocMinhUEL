@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Data Persistence</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px; }
+        .data-display { background-color: #f8f9fa; padding: 10px; border-radius: 3px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Data Persistence - Personal Task Manager</h1>
+    
+    <div class="test-section info">
+        <h3>📋 Hướng dẫn test:</h3>
+        <ol>
+            <li>Thêm một task mới</li>
+            <li>Chuyển sang tab "Quản lý mục tiêu"</li>
+            <li>Quay lại tab "Quản lý công việc"</li>
+            <li>Kiểm tra task vẫn còn không</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h3>🔧 Test localStorage</h3>
+        <button class="btn-primary" onclick="testLocalStorage()">Test localStorage</button>
+        <button class="btn-warning" onclick="clearStorage()">Clear Storage</button>
+        <div id="storage-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>📝 Test Data Operations</h3>
+        <input type="text" id="test-task-name" placeholder="Tên task test">
+        <button class="btn-success" onclick="addTestTask()">Thêm Task Test</button>
+        <button class="btn-primary" onclick="loadTestData()">Load Data</button>
+        <button class="btn-danger" onclick="deleteTestData()">Xóa Data</button>
+        <div id="data-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 Current Data</h3>
+        <button class="btn-primary" onclick="showCurrentData()">Hiển thị Data Hiện Tại</button>
+        <div id="current-data" class="data-display"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔄 Test Tab Switching</h3>
+        <button class="btn-primary" onclick="simulateTabSwitch()">Simulate Tab Switch</button>
+        <div id="tab-switch-result"></div>
+    </div>
+
+    <script>
+        function testLocalStorage() {
+            const resultDiv = document.getElementById('storage-result');
+            try {
+                // Test write
+                localStorage.setItem('test', 'test-value');
+                
+                // Test read
+                const value = localStorage.getItem('test');
+                
+                // Test remove
+                localStorage.removeItem('test');
+                
+                resultDiv.innerHTML = '<div class="success">✅ localStorage hoạt động bình thường</div>';
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ localStorage lỗi: ${error.message}</div>`;
+            }
+        }
+
+        function clearStorage() {
+            localStorage.clear();
+            document.getElementById('storage-result').innerHTML = '<div class="info">🗑️ Storage đã được xóa</div>';
+        }
+
+        function addTestTask() {
+            const taskName = document.getElementById('test-task-name').value;
+            if (!taskName) {
+                alert('Vui lòng nhập tên task');
+                return;
+            }
+
+            try {
+                // Load existing data
+                const existingData = localStorage.getItem('personalManagerData');
+                let data = existingData ? JSON.parse(existingData) : { tasks: [], goals: [], settings: {} };
+                
+                // Add new task
+                const newTask = {
+                    id: Date.now(),
+                    name: taskName,
+                    category: 'Test',
+                    dueDate: new Date().toISOString().split('T')[0],
+                    status: 'Chưa thực hiện',
+                    link: '',
+                    completionDate: null,
+                    createdAt: new Date().toISOString()
+                };
+                
+                data.tasks.push(newTask);
+                localStorage.setItem('personalManagerData', JSON.stringify(data));
+                
+                document.getElementById('data-result').innerHTML = 
+                    `<div class="success">✅ Đã thêm task "${taskName}" thành công!</div>`;
+                document.getElementById('test-task-name').value = '';
+                
+            } catch (error) {
+                document.getElementById('data-result').innerHTML = 
+                    `<div class="error">❌ Lỗi khi thêm task: ${error.message}</div>`;
+            }
+        }
+
+        function loadTestData() {
+            try {
+                const data = localStorage.getItem('personalManagerData');
+                if (data) {
+                    const parsedData = JSON.parse(data);
+                    document.getElementById('data-result').innerHTML = 
+                        `<div class="success">✅ Load thành công: ${parsedData.tasks.length} tasks, ${parsedData.goals.length} goals</div>`;
+                } else {
+                    document.getElementById('data-result').innerHTML = 
+                        `<div class="info">ℹ️ Chưa có dữ liệu trong storage</div>`;
+                }
+            } catch (error) {
+                document.getElementById('data-result').innerHTML = 
+                    `<div class="error">❌ Lỗi khi load data: ${error.message}</div>`;
+            }
+        }
+
+        function deleteTestData() {
+            localStorage.removeItem('personalManagerData');
+            document.getElementById('data-result').innerHTML = 
+                `<div class="info">🗑️ Đã xóa tất cả dữ liệu test</div>`;
+        }
+
+        function showCurrentData() {
+            try {
+                const data = localStorage.getItem('personalManagerData');
+                if (data) {
+                    const parsedData = JSON.parse(data);
+                    document.getElementById('current-data').innerHTML = 
+                        `<pre>${JSON.stringify(parsedData, null, 2)}</pre>`;
+                } else {
+                    document.getElementById('current-data').innerHTML = 
+                        `<div class="info">Chưa có dữ liệu</div>`;
+                }
+            } catch (error) {
+                document.getElementById('current-data').innerHTML = 
+                    `<div class="error">Lỗi: ${error.message}</div>`;
+            }
+        }
+
+        function simulateTabSwitch() {
+            try {
+                // Simulate the syncDataOnTabSwitch function
+                const savedData = localStorage.getItem('personalManagerData');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    document.getElementById('tab-switch-result').innerHTML = 
+                        `<div class="success">✅ Tab switch simulation: Found ${parsedData.tasks.length} tasks, ${parsedData.goals.length} goals</div>`;
+                } else {
+                    document.getElementById('tab-switch-result').innerHTML = 
+                        `<div class="info">ℹ️ Không có dữ liệu để sync</div>`;
+                }
+            } catch (error) {
+                document.getElementById('tab-switch-result').innerHTML = 
+                    `<div class="error">❌ Lỗi khi simulate tab switch: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            testLocalStorage();
+            loadTestData();
+        });
+    </script>
+</body>
+</html>

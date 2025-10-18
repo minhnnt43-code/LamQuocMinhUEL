@@ -1,0 +1,114 @@
+╔══════════════════════════════════════════════════════╗
+║           HƯỚNG DẪN DEBUG VÀ SỬA LỖI                ║
+╚══════════════════════════════════════════════════════╝
+
+🔧 CÁC LỖI THƯỜNG GẶP VÀ CÁCH SỬA:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ LỖI 1: "Không nhập được nội dung"
+✅ GIẢI PHÁP:
+1. Mở Developer Tools (F12)
+2. Xem tab Console có lỗi JavaScript không
+3. Kiểm tra localStorage có hoạt động không
+4. Thử mở file test.html để kiểm tra
+
+❌ LỖI 2: "event is not defined"
+✅ GIẢI PHÁP: Đã sửa trong phiên bản mới
+- Hàm showSection() đã được cải thiện
+- Truyền tham số this từ onclick handlers
+
+❌ LỖI 3: "Cannot read property of undefined"
+✅ GIẢI PHÁP:
+1. Kiểm tra các element có tồn tại không
+2. Đảm bảo DOM đã load xong
+3. Sử dụng optional chaining (?. )
+
+❌ LỖI 4: "localStorage is not available"
+✅ GIẢI PHÁP:
+1. Kiểm tra trình duyệt có hỗ trợ localStorage
+2. Kiểm tra chế độ private/incognito
+3. Kiểm tra quota storage
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🛠️ CÁCH DEBUG:
+
+1. MỞ DEVELOPER TOOLS (F12)
+   - Tab Console: Xem lỗi JavaScript
+   - Tab Network: Xem request/response
+   - Tab Application: Xem localStorage
+
+2. KIỂM TRA CONSOLE LOGS:
+   - "Dữ liệu đã được tải" - OK
+   - "Dữ liệu đã được lưu" - OK
+   - "Trạng thái lưu trữ" - OK
+
+3. KIỂM TRA LOCALSTORAGE:
+   - Mở Application tab
+   - Xem Local Storage
+   - Key: personalManagerData
+
+4. KIỂM TRA ELEMENTS:
+   - Đảm bảo các input có đúng ID
+   - Kiểm tra event listeners
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧪 FILE TEST:
+
+Mở file "test.html" để kiểm tra:
+- localStorage hoạt động
+- JSON API
+- Date API
+- Fetch API
+- Geolocation API
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CHECKLIST TRƯỚC KHI UPLOAD GITHUB:
+
+✅ File index.html hoạt động bình thường
+✅ Có thể thêm/sửa/xóa tasks
+✅ Có thể thêm/sửa/xóa goals
+✅ Search functionality hoạt động
+✅ Keyboard shortcuts hoạt động
+✅ Import/Export hoạt động
+✅ localStorage lưu trữ được
+✅ Responsive trên mobile
+✅ Không có lỗi JavaScript trong console
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 CÁCH UPLOAD LÊN GITHUB:
+
+1. TẠO REPOSITORY:
+   - Tên: personal-task-manager
+   - Public repository
+   - Add README: No
+
+2. UPLOAD FILES:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin https://github.com/username/repo.git
+   git push -u origin main
+   ```
+
+3. ENABLE GITHUB PAGES:
+   - Settings → Pages
+   - Source: Deploy from a branch
+   - Branch: main
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 HỖ TRỢ:
+
+Nếu vẫn gặp lỗi:
+1. Chạy test.html trước
+2. Kiểm tra console logs
+3. Thử trình duyệt khác
+4. Clear cache và reload
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

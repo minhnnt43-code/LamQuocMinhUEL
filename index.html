@@ -333,9 +333,9 @@
                 <div id="current-location">Đang xác định vị trí...</div>
             </div>
             <ul class="nav-menu" role="navigation" aria-label="Menu chính">
-                <li><button class="nav-btn active" onclick="showSection('tasks')" aria-label="Chuyển đến phần quản lý công việc" aria-current="page">Quản lý công việc</button></li>
-                <li><button class="nav-btn" onclick="showSection('goals')" aria-label="Chuyển đến phần quản lý mục tiêu">Quản lý mục tiêu</button></li>
-                <li><button class="nav-btn" onclick="showSection('settings')" aria-label="Chuyển đến phần cài đặt tùy chỉnh">Cài đặt Tùy chỉnh</button></li>
+                <li><button class="nav-btn active" onclick="showSection('tasks', this)" aria-label="Chuyển đến phần quản lý công việc" aria-current="page">Quản lý công việc</button></li>
+                <li><button class="nav-btn" onclick="showSection('goals', this)" aria-label="Chuyển đến phần quản lý mục tiêu">Quản lý mục tiêu</button></li>
+                <li><button class="nav-btn" onclick="showSection('settings', this)" aria-label="Chuyển đến phần cài đặt tùy chỉnh">Cài đặt Tùy chỉnh</button></li>
             </ul>
             <div class="sidebar-footer">
                 <div class="data-actions">
@@ -444,11 +444,20 @@
         function handleLogout() { sessionStorage.removeItem('isLoggedIn'); showLoginScreen(); }
         function showApp() { document.getElementById('login-container').style.display = 'none'; document.getElementById('app-container').style.display = 'flex'; loadAllData(); }
         function showLoginScreen() { document.getElementById('login-container').style.display = 'flex'; document.getElementById('app-container').style.display = 'none'; }
-        function showSection(sectionName) {
+        function showSection(sectionName, clickedElement = null) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(sectionName).classList.add('active');
-            event.target.classList.add('active');
+            
+            // Tìm button tương ứng với section
+            const targetButton = clickedElement || document.querySelector(`[onclick*="${sectionName}"]`);
+            if (targetButton) {
+                targetButton.classList.add('active');
+            }
+            
+            // Reload data khi chuyển tab để đảm bảo dữ liệu mới nhất
+            syncDataOnTabSwitch();
+            renderAll();
         }
 
         // --- CÁC HÀM TIỆN ÍCH ---
@@ -589,6 +598,27 @@
                 renderAll();
             }
         }
+        
+        // Hàm đồng bộ dữ liệu khi chuyển tab
+        function syncDataOnTabSwitch() {
+            try {
+                const savedData = localStorage.getItem('personalManagerData');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    // Chỉ cập nhật nếu có dữ liệu mới hơn
+                    if (parsedData.tasks && parsedData.tasks.length !== tasks.length) {
+                        tasks = parsedData.tasks;
+                        console.log('Tasks synced from localStorage');
+                    }
+                    if (parsedData.goals && parsedData.goals.length !== goals.length) {
+                        goals = parsedData.goals;
+                        console.log('Goals synced from localStorage');
+                    }
+                }
+            } catch (error) {
+                console.error('Lỗi khi đồng bộ dữ liệu:', error);
+            }
+        }
         function exportDataToFile() {
             const dataStr = JSON.stringify({ tasks, goals, settings }, null, 2); 
             const blob = new Blob([dataStr], { type: 'application/json' });
@@ -674,6 +704,12 @@
             document.getElementById('add-task-btn').disabled = true;
             taskNameInput.focus();
             showNotification('Thêm công việc thành công!');
+            
+            // Auto-save backup để đảm bảo dữ liệu được lưu
+            setTimeout(() => {
+                saveAllData();
+                console.log('Auto-save completed after adding task');
+            }, 100);
         }
         function deleteTask(id) { 
             const task = tasks.find(t => t.id === id);
@@ -809,6 +845,12 @@
             saveAllData(); renderGoals();
             document.getElementById('goal-name').value = ''; document.getElementById('goal-conditions').value = ''; document.getElementById('goal-link').value = '';
             showNotification('Thêm mục tiêu thành công!');
+            
+            // Auto-save backup để đảm bảo dữ liệu được lưu
+            setTimeout(() => {
+                saveAllData();
+                console.log('Auto-save completed after adding goal');
+            }, 100);
         }
         function deleteGoal(id) { 
             const goal = goals.find(g => g.id === id);
@@ -869,7 +911,17 @@
                 saveAllData(); renderTasks(); closeModal();
             }
         }
-        function saveGoalChanges() { /* ... Giữ nguyên ... */ }
+        function saveGoalChanges() {
+            const g = goals.find(i => i.id === editingItemId);
+            if (g) {
+                g.name = document.getElementById('edit-goal-name').value.trim();
+                g.conditions = document.getElementById('edit-goal-conditions').value.trim();
+                g.link = document.getElementById('edit-goal-link').value.trim();
+                saveAllData();
+                renderGoals();
+                closeModal();
+            }
+        }
         
         function renderAll() { renderTasks(); renderGoals(); renderSettings(); }
 
@@ -910,7 +962,8 @@
                     const sections = ['tasks', 'goals', 'settings'];
                     const sectionIndex = parseInt(e.key) - 1;
                     if (sections[sectionIndex]) {
-                        showSection(sections[sectionIndex]);
+                        const targetButton = document.querySelector(`[onclick*="${sections[sectionIndex]}"]`);
+                        showSection(sections[sectionIndex], targetButton);
                     }
                 }
             });
@@ -939,6 +992,14 @@
                 getLocation();
                 setupKeyboardShortcuts();
                 showStorageInfo(); // Kiểm tra trạng thái lưu trữ
+                
+                // Auto-save định kỳ mỗi 30 giây để đảm bảo dữ liệu không bị mất
+                setInterval(() => {
+                    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                        saveAllData();
+                        console.log('Auto-save completed (periodic)');
+                    }
+                }, 30000);
             }, 1000);
             
             const taskNameInput = document.getElementById('task-name');
@@ -974,12 +1035,47 @@
                 }
             });
 
-            document.getElementById('import-file-input').addEventListener('change', (event) => { /* ... Giữ nguyên ... */ });
+            document.getElementById('import-file-input').addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data && typeof data === 'object') {
+                            tasks = data.tasks || [];
+                            goals = data.goals || [];
+                            settings = data.settings || {};
+                            saveAllData();
+                            renderAll();
+                            showNotification('Nhập dữ liệu thành công!');
+                        } else { showNotification('Lỗi: File không hợp lệ.', 'error'); }
+                    } catch (error) { showNotification('Lỗi: Không thể đọc file JSON.', 'error'); }
+                    event.target.value = '';
+                };
+                reader.readAsText(file);
+            });
             document.getElementById('profile-pic-input').addEventListener('change', handleProfilePictureUpload);
         });
         
         document.getElementById('password').addEventListener('keyup', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleLogin(); } });
         window.onclick = (e) => { if (e.target.id == 'edit-modal') closeModal(); }
+        
+        // Lưu dữ liệu khi người dùng rời khỏi trang
+        window.addEventListener('beforeunload', () => {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                saveAllData();
+                console.log('Data saved before page unload');
+            }
+        });
+        
+        // Lưu dữ liệu khi trang bị ẩn (chuyển tab)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && sessionStorage.getItem('isLoggedIn') === 'true') {
+                saveAllData();
+                console.log('Data saved when page hidden');
+            }
+        });
     </script>
 </body>
 </html>
