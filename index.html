@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Công Việc & Mục Tiêu</title>
+    <title>Quản Lý Công Việc & Mục Tiêu - Ứng Dụng Cá Nhân Hiệu Quả</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Ứng dụng quản lý công việc và mục tiêu cá nhân hiệu quả. Theo dõi tiến độ, đặt deadline, và đạt được mục tiêu của bạn một cách có tổ chức.">
+    <meta name="keywords" content="quản lý công việc, todo list, mục tiêu cá nhân, quản lý thời gian, productivity, task management">
+    <meta name="author" content="Lâm Quốc Minh">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Quản Lý Công Việc & Mục Tiêu - Ứng Dụng Cá Nhân">
+    <meta property="og:description" content="Ứng dụng quản lý công việc và mục tiêu cá nhân hiệu quả. Theo dõi tiến độ và đạt được mục tiêu của bạn.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI2MzAiIHZpZXdCb3g9IjAgMCAxMjAwIDYzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iNjMwIiBmaWxsPSIjMDA1Qjk2Ii8+Cjx0ZXh0IHg9IjYwMCIgeT0iMzE1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UXXhuqNuIEx5IEPhu6dhIFZp4buHdCAmIE3hu5tYyBUacOqYTwvdGV4dD4KPC9zdmc+">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMDA1Qjk2Ii8+Cjx0ZXh0IHg9IjE2IiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkM8L3RleHQ+Cjwvc3ZnPg==">
+    
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://nominatim.openstreetmap.org;">
     
     <!-- Tích hợp Fonts từ Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,6 +154,42 @@
         .content-section { display: none; animation: fadeIn 0.5s ease-in-out; }
         .content-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--white);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: var(--white);
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
 
         h1 {
             font-family: var(--font-title); color: var(--primary-blue); font-size: 2.5rem;
@@ -249,13 +304,21 @@
 </head>
 <body>
 
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div>
+            <div class="spinner"></div>
+            <div class="loading-text">Đang tải ứng dụng...</div>
+        </div>
+    </div>
+
     <div id="login-container">
         <div class="login-box">
             <h2>Đăng Nhập</h2>
             <p id="login-error">Tên đăng nhập hoặc mật khẩu không đúng!</p>
-            <div class="form-group"><label for="username">Tên đăng nhập</label><input type="text" id="username" value="lamquocminh"></div>
-            <div class="form-group"><label for="password">Mật khẩu</label><input type="password" id="password" value="lamquocminh"></div>
-            <button class="btn-submit" onclick="handleLogin()">Đăng Nhập</button>
+            <div class="form-group"><label for="username">Tên đăng nhập</label><input type="text" id="username" value="lamquocminh" aria-describedby="username-help" autocomplete="username"></div>
+            <div class="form-group"><label for="password">Mật khẩu</label><input type="password" id="password" value="lamquocminh" aria-describedby="password-help" autocomplete="current-password"></div>
+            <button class="btn-submit" onclick="handleLogin()" aria-label="Đăng nhập vào hệ thống">Đăng Nhập</button>
         </div>
     </div>
     
@@ -269,16 +332,17 @@
                 <div id="current-time">--:--:--</div>
                 <div id="current-location">Đang xác định vị trí...</div>
             </div>
-            <ul class="nav-menu">
-                <li><button class="nav-btn active" onclick="showSection('tasks')">Quản lý công việc</button></li>
-                <li><button class="nav-btn" onclick="showSection('goals')">Quản lý mục tiêu</button></li>
-                <li><button class="nav-btn" onclick="showSection('settings')">Cài đặt Tùy chỉnh</button></li>
+            <ul class="nav-menu" role="navigation" aria-label="Menu chính">
+                <li><button class="nav-btn active" onclick="showSection('tasks')" aria-label="Chuyển đến phần quản lý công việc" aria-current="page">Quản lý công việc</button></li>
+                <li><button class="nav-btn" onclick="showSection('goals')" aria-label="Chuyển đến phần quản lý mục tiêu">Quản lý mục tiêu</button></li>
+                <li><button class="nav-btn" onclick="showSection('settings')" aria-label="Chuyển đến phần cài đặt tùy chỉnh">Cài đặt Tùy chỉnh</button></li>
             </ul>
             <div class="sidebar-footer">
                 <div class="data-actions">
                     <button class="import-btn" onclick="importDataFromFile()">Nhập Dữ Liệu</button>
                     <button class="export-btn" onclick="exportDataToFile()">Xuất Dữ Liệu</button>
                 </div>
+                <button class="logout-btn" onclick="showStorageInfo()" style="margin-top: 0.5rem;">🔍 Kiểm Tra Lưu Trữ</button>
                 <button class="logout-btn" onclick="handleLogout()">Đăng xuất</button>
             </div>
         </aside>
@@ -287,6 +351,14 @@
             <section id="tasks" class="content-section active">
                 <h1>Quản lý công việc</h1>
                 <marquee class="task-ticker" scrollamount="5"></marquee>
+                
+                <!-- Search Box -->
+                <div class="form-container" style="margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="task-search">🔍 Tìm kiếm công việc</label>
+                        <input type="text" id="task-search" placeholder="Nhập từ khóa để tìm kiếm..." aria-label="Tìm kiếm công việc">
+                    </div>
+                </div>
                 <div class="form-container">
                     <div class="form-grid">
                         <div class="form-group" style="grid-column: 1 / -1;">
@@ -357,6 +429,8 @@
         let goals = [];
         let settings = {};
         let editingItemId = null;
+        let filteredTasks = [];
+        let searchQuery = '';
 
         // --- CÁC HÀM XỬ LÝ ĐĂNG NHẬP & GIAO DIỆN ---
         function handleLogin() {
@@ -381,6 +455,37 @@
         function updateTime() {
             const timeEl = document.getElementById('current-time');
             if (timeEl) timeEl.innerHTML = `<span>🕒</span> ${new Date().toLocaleTimeString('vi-VN')}`;
+        }
+        
+        // Kiểm tra trạng thái localStorage
+        function checkStorageStatus() {
+            try {
+                const testKey = 'storageTest';
+                localStorage.setItem(testKey, 'test');
+                localStorage.removeItem(testKey);
+                return true;
+            } catch (error) {
+                console.error('LocalStorage không khả dụng:', error);
+                return false;
+            }
+        }
+        
+        // Hiển thị thông tin lưu trữ
+        function showStorageInfo() {
+            const storageAvailable = checkStorageStatus();
+            const dataSize = localStorage.getItem('personalManagerData') ? 
+                localStorage.getItem('personalManagerData').length : 0;
+            
+            console.log('Trạng thái lưu trữ:', {
+                available: storageAvailable,
+                dataSize: dataSize + ' bytes',
+                tasks: tasks.length,
+                goals: goals.length
+            });
+            
+            if (!storageAvailable) {
+                showNotification('Cảnh báo: LocalStorage không khả dụng. Dữ liệu sẽ không được lưu!', 'error');
+            }
         }
         async function getLocation() {
             const locEl = document.getElementById('current-location');
@@ -437,18 +542,52 @@
         }
         
         // --- CÁC HÀM XỬ LÝ DỮ LIỆU ---
-        function saveAllData() { localStorage.setItem('personalManagerData', JSON.stringify({ tasks, goals, settings })); }
+        function saveAllData() { 
+            try {
+                const dataToSave = { tasks, goals, settings };
+                localStorage.setItem('personalManagerData', JSON.stringify(dataToSave));
+                console.log('Dữ liệu đã được lưu:', dataToSave);
+            } catch (error) {
+                console.error('Lỗi khi lưu dữ liệu:', error);
+                showNotification('Lỗi khi lưu dữ liệu! Vui lòng thử lại.', 'error');
+            }
+        }
         function loadAllData() {
-            const savedData = JSON.parse(localStorage.getItem('personalManagerData'));
-            const defaultSettings = {
-                categories: ['Cá nhân', 'Công việc', 'Học tập'],
-                statuses: ['Chưa thực hiện', 'Đang thực hiện', 'Đã hoàn thành'],
-            };
-            settings = (savedData && savedData.settings) ? savedData.settings : defaultSettings;
-            tasks = (savedData && savedData.tasks) ? savedData.tasks : [];
-            goals = (savedData && savedData.goals) ? savedData.goals : [];
-            loadProfilePicture();
-            renderAll();
+            try {
+                const savedData = localStorage.getItem('personalManagerData');
+                const defaultSettings = {
+                    categories: ['Cá nhân', 'Công việc', 'Học tập'],
+                    statuses: ['Chưa thực hiện', 'Đang thực hiện', 'Đã hoàn thành'],
+                };
+                
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    settings = parsedData.settings || defaultSettings;
+                    tasks = parsedData.tasks || [];
+                    goals = parsedData.goals || [];
+                } else {
+                    // Lần đầu sử dụng - khởi tạo dữ liệu mặc định
+                    settings = defaultSettings;
+                    tasks = [];
+                    goals = [];
+                    saveAllData(); // Lưu dữ liệu mặc định
+                }
+                
+                loadProfilePicture();
+                renderAll();
+                console.log('Dữ liệu đã được tải:', { tasks: tasks.length, goals: goals.length, settings });
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu:', error);
+                // Khởi tạo lại dữ liệu mặc định nếu có lỗi
+                settings = {
+                    categories: ['Cá nhân', 'Công việc', 'Học tập'],
+                    statuses: ['Chưa thực hiện', 'Đang thực hiện', 'Đã hoàn thành'],
+                };
+                tasks = [];
+                goals = [];
+                saveAllData();
+                renderAll();
+            }
         }
         function exportDataToFile() {
             const dataStr = JSON.stringify({ tasks, goals, settings }, null, 2); 
@@ -536,7 +675,15 @@
             taskNameInput.focus();
             showNotification('Thêm công việc thành công!');
         }
-        function deleteTask(id) { tasks = tasks.filter(task => task.id !== id); saveAllData(); renderTasks(); }
+        function deleteTask(id) { 
+            const task = tasks.find(t => t.id === id);
+            if (task && confirm(`Bạn có chắc chắn muốn xóa công việc "${task.name}"?`)) {
+                tasks = tasks.filter(task => task.id !== id); 
+                saveAllData(); 
+                renderTasks();
+                showNotification('Đã xóa công việc thành công!');
+            }
+        }
         function completeTask(id) {
             const task = tasks.find(t => t.id === id);
             if (task) {
@@ -569,14 +716,39 @@
             }
         }
 
+        // --- SEARCH FUNCTIONALITY ---
+        function filterTasks(query) {
+            searchQuery = query.toLowerCase();
+            if (!searchQuery) {
+                filteredTasks = [...tasks];
+            } else {
+                filteredTasks = tasks.filter(task => 
+                    task.name.toLowerCase().includes(searchQuery) ||
+                    task.category.toLowerCase().includes(searchQuery) ||
+                    task.status.toLowerCase().includes(searchQuery) ||
+                    (task.link && task.link.toLowerCase().includes(searchQuery))
+                );
+            }
+            renderTasks();
+        }
+        
         function renderTasks() {
             const taskList = document.getElementById('task-list');
-            if (tasks.length === 0) { taskList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có công việc nào.</p>'; updateTaskTicker(); return; }
+            const tasksToRender = searchQuery ? filteredTasks : tasks;
+            
+            if (tasksToRender.length === 0) { 
+                const message = searchQuery ? 
+                    `Không tìm thấy công việc nào với từ khóa "${searchQuery}"` : 
+                    'Chưa có công việc nào.';
+                taskList.innerHTML = `<p style="text-align: center; color: var(--dark-gray);">${message}</p>`; 
+                updateTaskTicker(); 
+                return; 
+            }
 
             const today = new Date(); today.setHours(0,0,0,0);
-            tasks.sort((a, b) => (a.dueDate && b.dueDate) ? new Date(a.dueDate) - new Date(b.dueDate) : a.dueDate ? -1 : 1);
+            tasksToRender.sort((a, b) => (a.dueDate && b.dueDate) ? new Date(a.dueDate) - new Date(b.dueDate) : a.dueDate ? -1 : 1);
 
-            taskList.innerHTML = tasks.map(task => {
+            taskList.innerHTML = tasksToRender.map(task => {
                 let dueDateWarning = '';
                 let itemClass = '';
                 const completedStatus = settings.statuses[settings.statuses.length - 1];
@@ -638,7 +810,15 @@
             document.getElementById('goal-name').value = ''; document.getElementById('goal-conditions').value = ''; document.getElementById('goal-link').value = '';
             showNotification('Thêm mục tiêu thành công!');
         }
-        function deleteGoal(id) { goals = goals.filter(g => g.id !== id); saveAllData(); renderGoals(); }
+        function deleteGoal(id) { 
+            const goal = goals.find(g => g.id === id);
+            if (goal && confirm(`Bạn có chắc chắn muốn xóa mục tiêu "${goal.name}"?`)) {
+                goals = goals.filter(g => g.id !== id); 
+                saveAllData(); 
+                renderGoals();
+                showNotification('Đã xóa mục tiêu thành công!');
+            }
+        }
         function toggleGoalCompletion(id) { const g = goals.find(g => g.id === id); if (g) { g.completed = !g.completed; saveAllData(); renderGoals(); } }
         function renderGoals() {
             const goalList = document.getElementById('goal-list');
@@ -693,20 +873,89 @@
         
         function renderAll() { renderTasks(); renderGoals(); renderSettings(); }
 
+        // --- KEYBOARD SHORTCUTS ---
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                // Chỉ hoạt động khi không đang nhập text
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                
+                // Ctrl/Cmd + N: Tạo task mới
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                    e.preventDefault();
+                    if (document.getElementById('tasks').classList.contains('active')) {
+                        document.getElementById('task-name').focus();
+                    }
+                }
+                
+                // Ctrl/Cmd + S: Lưu dữ liệu
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveAllData();
+                    showNotification('Đã lưu dữ liệu thành công!');
+                }
+                
+                // Ctrl/Cmd + E: Export dữ liệu
+                if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                    e.preventDefault();
+                    exportDataToFile();
+                }
+                
+                // Escape: Đóng modal
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+                
+                // Phím số để chuyển tab
+                if (e.key >= '1' && e.key <= '3') {
+                    const sections = ['tasks', 'goals', 'settings'];
+                    const sectionIndex = parseInt(e.key) - 1;
+                    if (sections[sectionIndex]) {
+                        showSection(sections[sectionIndex]);
+                    }
+                }
+            });
+        }
+        
+        // --- LOADING MANAGEMENT ---
+        function hideLoadingSpinner() {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) {
+                spinner.style.opacity = '0';
+                setTimeout(() => {
+                    spinner.style.display = 'none';
+                }, 500);
+            }
+        }
+        
         // --- KHỞI CHẠY ỨNG DỤNG ---
         document.addEventListener('DOMContentLoaded', () => {
-            if (sessionStorage.getItem('isLoggedIn') === 'true') { showApp(); } 
-            else { showLoginScreen(); }
-            setInterval(updateTime, 1000);
-            getLocation();
+            // Hiển thị loading spinner trong 1 giây
+            setTimeout(() => {
+                hideLoadingSpinner();
+                
+                if (sessionStorage.getItem('isLoggedIn') === 'true') { showApp(); } 
+                else { showLoginScreen(); }
+                setInterval(updateTime, 1000);
+                getLocation();
+                setupKeyboardShortcuts();
+                showStorageInfo(); // Kiểm tra trạng thái lưu trữ
+            }, 1000);
             
             const taskNameInput = document.getElementById('task-name');
             const addTaskBtn = document.getElementById('add-task-btn');
+            const taskSearchInput = document.getElementById('task-search');
             
             const today = new Date();
             const year = today.getFullYear();
             const defaultDate = year < 2025 ? new Date('2025-01-01T00:00:00') : today;
             document.getElementById('task-due-date').value = formatISOToVietnamese(defaultDate.toISOString().slice(0,10));
+            
+            // Search functionality
+            if (taskSearchInput) {
+                taskSearchInput.addEventListener('input', (e) => {
+                    filterTasks(e.target.value);
+                });
+            }
             
             addTaskBtn.disabled = true;
             taskNameInput.addEventListener('input', () => {

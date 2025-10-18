@@ -1,0 +1,59 @@
+{
+  "name": "personal-task-manager",
+  "version": "2.0.0",
+  "description": "A modern web application for managing personal tasks and goals with professional UI and advanced features",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "npx live-server --port=3000",
+    "build": "echo 'No build process needed - pure HTML/CSS/JS'",
+    "test": "echo 'No tests specified'",
+    "lint": "echo 'No linting configured'"
+  },
+  "keywords": [
+    "task-management",
+    "productivity",
+    "goals",
+    "todo-list",
+    "personal-organizer",
+    "web-app",
+    "vanilla-javascript",
+    "responsive-design",
+    "localStorage",
+    "vietnamese"
+  ],
+  "author": {
+    "name": "Lâm Quốc Minh",
+    "email": "your-email@example.com",
+    "url": "https://github.com/your-username"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/personal-task-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/personal-task-manager/issues"
+  },
+  "homepage": "https://your-username.github.io/personal-task-manager",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "files": [
+    "index.html",
+    "fonts.css",
+    "README.md",
+    "LICENSE",
+    "HUONG_DAN_SU_DUNG_MOI.txt"
+  ]
+}

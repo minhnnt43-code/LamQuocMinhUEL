@@ -53,7 +53,7 @@ Bước 4: LƯU FILE VÀ TẢI LẠI TRANG WEB
 
 📂 CẤU TRÚC THƯ MỤC SAU KHI CÀI FONT:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-lqmmm/
+LamQuocMinh-UEL/
 ├── fonts/                  ← Tạo thư mục này
 │   ├── UTM-Avo.ttf        ← Đặt file font vào đây
 │   └── UTM-Avo-Bold.ttf   ← (Tùy chọn)

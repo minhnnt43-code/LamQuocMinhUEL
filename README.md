@@ -1,138 +1,201 @@
-# 🌟 Trang Quản Lý Cá Nhân
+# Personal Task & Goal Manager
 
-Một trang web đơn giản và dễ sử dụng để quản lý công việc, dữ liệu, tài chính và thành tích cá nhân của bạn.
+A professional web application for managing personal tasks and goals with modern UI and advanced features.
 
-## 📋 Tính năng
+## 🚀 Features
 
-### 1. **Quản Lý Công Việc** 📋
-- Thêm công việc mới
-- Đánh dấu hoàn thành
-- Xóa công việc
-- Tự động lưu dữ liệu
+### Core Functionality
+- ✅ **Task Management**: Create, edit, delete, and track tasks
+- 🎯 **Goal Management**: Set and monitor personal goals
+- 🔍 **Search Functionality**: Find tasks by name, category, or status
+- 📅 **Deadline Tracking**: Visual warnings for upcoming and overdue tasks
+- 🏷️ **Custom Categories**: Create and manage task categories
+- 📊 **Progress Tracking**: Monitor completion status
 
-### 2. **Quản Lý Dữ Liệu** 💾
-- Lưu trữ ghi chú với tiêu đề và nội dung
-- Tự động ghi ngày tạo
-- Dễ dàng tìm kiếm và xóa
+### User Experience
+- ⌨️ **Keyboard Shortcuts**: 
+  - `Ctrl+N`: Create new task
+  - `Ctrl+S`: Save data
+  - `Ctrl+E`: Export data
+  - `Escape`: Close modal
+  - `1,2,3`: Switch tabs
+- 🔄 **Auto-save**: Data automatically saved to browser storage
+- 📱 **Responsive Design**: Works on desktop and mobile
+- 🎨 **Modern UI**: Professional blue theme with smooth animations
 
-### 3. **Quản Lý Tài Chính** 💰
-- Theo dõi thu nhập và chi tiêu
-- Xem tổng quan tài chính
-- Tính toán số dư tự động
-- Phân loại rõ ràng thu/chi
+### Advanced Features
+- 🔒 **Data Security**: Content Security Policy implemented
+- ♿ **Accessibility**: ARIA labels and keyboard navigation
+- 🔍 **SEO Optimized**: Meta tags and Open Graph support
+- 📊 **Data Management**: Import/Export JSON files
+- 🖼️ **Profile Pictures**: Custom avatar support
+- 🌍 **Location Detection**: Automatic location display
+- ⏰ **Real-time Clock**: Live time updates
 
-### 4. **Quản Lý Thành Tích** 🏆
-- Ghi lại các thành tích quan trọng
-- Lưu ngày và mô tả chi tiết
-- Dễ dàng xem lại lịch sử
+## 🛠️ Technologies Used
 
-## 🚀 Cách sử dụng
+- **HTML5**: Semantic markup with accessibility features
+- **CSS3**: Modern styling with CSS Grid and Flexbox
+- **JavaScript (ES6+)**: Vanilla JS with modern features
+- **LocalStorage**: Client-side data persistence
+- **Google Fonts**: Montserrat font integration
+- **OpenStreetMap API**: Location services
 
-### Bước 1: Mở trang web
-1. Tìm file `index.html` trong thư mục
-2. Nhấp đúp vào file để mở trong trình duyệt
-3. Hoặc kéo thả file vào trình duyệt
+## 📁 Project Structure
 
-### Bước 2: Sử dụng các tính năng
+```
+LamQuocMinhUEL-main/
+├── index.html                    # Main application file
+├── fonts.css                     # Font configuration
+├── style.css                     # Legacy CSS (not used)
+├── script.js                     # Legacy JS (not used)
+├── README.md                     # Project documentation
+├── HUONG_DAN_SU_DUNG.txt         # Usage guide (Vietnamese)
+├── HUONG_DAN_SU_DUNG_MOI.txt     # Updated usage guide
+├── HUONG_DAN_FONT_UTM_AVO.txt    # Font installation guide
+└── .gitignore                    # Git ignore rules
+```
 
-#### Quản Lý Công Việc
-1. Nhập tên công việc vào ô "Nhập công việc mới..."
-2. Nhấn nút "Thêm"
-3. Nhấn "✓ Hoàn thành" để đánh dấu xong việc
-4. Nhấn "🗑️ Xóa" để xóa công việc
+## 🚀 Getting Started
 
-#### Quản Lý Dữ Liệu
-1. Nhập tiêu đề và nội dung
-2. Nhấn "Lưu Dữ Liệu"
-3. Dữ liệu sẽ hiện dạng thẻ bên dưới
-4. Nhấn "🗑️ Xóa" để xóa dữ liệu không cần
+### Prerequisites
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- No server required - runs locally
 
-#### Quản Lý Tài Chính
-1. Chọn loại: "Thu Nhập" hoặc "Chi Tiêu"
-2. Nhập mô tả (ví dụ: "Lương tháng 10", "Mua sắm")
-3. Nhập số tiền
-4. Nhấn "Thêm"
-5. Xem tổng quan ở phía trên
+### Installation
+1. Clone or download this repository
+2. Open `index.html` in your web browser
+3. Start managing your tasks and goals!
 
-#### Quản Lý Thành Tích
-1. Nhập tên thành tích
-2. Chọn ngày đạt được
-3. Nhập mô tả (tùy chọn)
-4. Nhấn "Thêm Thành Tích"
+### First Time Setup
+1. Login with default credentials:
+   - Username: `lamquocminh`
+   - Password: `lamquocminh`
+2. The app will automatically initialize with default settings
+3. Customize categories and statuses in Settings
 
-## 💾 Lưu trữ dữ liệu
+## 📖 Usage Guide
 
-- **Tự động lưu**: Mọi dữ liệu được tự động lưu trên máy tính của bạn
-- **Không cần đăng nhập**: Dữ liệu lưu trực tiếp trên trình duyệt
-- **Riêng tư**: Chỉ bạn mới xem được dữ liệu của mình
-- **Lưu ý**: Nếu xóa dữ liệu trình duyệt, thông tin sẽ mất
+### Managing Tasks
+1. **Create Task**: Fill in task details and click "Thêm công việc"
+2. **Search**: Use the search box to find specific tasks
+3. **Edit**: Click "Sửa" to modify task details
+4. **Complete**: Click "Hoàn thành" when done
+5. **Delete**: Click "Xóa" (with confirmation dialog)
 
-## 🎨 Giao diện
+### Managing Goals
+1. **Set Goal**: Enter goal name and required steps
+2. **Track Progress**: Mark goals as completed
+3. **Attach Links**: Add relevant URLs
 
-- **Chuyên nghiệp**: Thiết kế cao cấp với màu xanh biển sang trọng
-- **Font chữ đẹp**: Sử dụng font UTM Avo (có font backup nếu chưa cài)
-- **Hiệu ứng mượt**: Gradient xanh biển, animation mượt mà
-- **Dễ sử dụng**: Giao diện trực quan, rõ ràng
-- **Responsive**: Tự động điều chỉnh trên điện thoại, máy tính bảng
+### Data Management
+- **Auto-save**: All changes saved automatically
+- **Export**: Download data as JSON file
+- **Import**: Upload previously exported data
+- **Backup**: Use export feature for regular backups
 
-## 📱 Tương thích
+## 🔧 Configuration
 
-- ✅ Google Chrome
-- ✅ Microsoft Edge
-- ✅ Firefox
-- ✅ Safari
-- ✅ Điện thoại và máy tính bảng
+### Custom Settings
+- **Categories**: Add/remove task categories
+- **Statuses**: Customize progress statuses
+- **Profile**: Upload custom avatar
+- **Theme**: Blue color scheme (customizable in CSS)
 
-## 🛠️ Tùy chỉnh
+### Browser Storage
+- Data stored in browser's localStorage
+- No server required
+- Data persists between sessions
+- Use export feature for backup
 
-### Thay đổi màu sắc
-Mở file `style.css` và tìm các dòng màu gradient:
+## 🎨 Customization
+
+### Colors
+The app uses CSS custom properties for easy theming:
 ```css
-background: linear-gradient(135deg, #0a4a7a 0%, #1e88e5 50%, #42a5f5 100%);
+:root {
+    --primary-blue: #005B96;
+    --primary-orange: #FF7A00;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+}
 ```
-Bạn có thể thay đổi mã màu thành màu bạn thích.
 
-### Cài đặt font UTM Avo
-- Trang web đã sẵn sàng để sử dụng font UTM Avo
-- Nếu chưa có font, trang web tự động dùng font backup (vẫn đẹp!)
-- Xem file `HUONG_DAN_FONT_UTM_AVO.txt` để biết cách cài font
+### Fonts
+- Primary: UTM Avo (Vietnamese font)
+- Fallback: System fonts
+- Title: Montserrat (Google Fonts)
 
-### Thay đổi tiêu đề
-Mở file `index.html` và tìm dòng:
-```html
-<h1>🌟 Trang Quản Lý Cá Nhân</h1>
-```
-Thay đổi nội dung trong thẻ `<h1>` thành tiêu đề bạn muốn.
+## 🔒 Security Features
 
-## ❓ Câu hỏi thường gặp
+- **Content Security Policy**: Prevents XSS attacks
+- **Input Validation**: Sanitizes user input
+- **Local Storage**: Data stays on your device
+- **No External Dependencies**: Except Google Fonts and OpenStreetMap
 
-**Q: Dữ liệu có mất không?**
-A: Dữ liệu lưu trên trình duyệt. Chỉ mất khi bạn xóa dữ liệu trình duyệt hoặc dùng máy khác.
+## 📱 Browser Support
 
-**Q: Có cần Internet không?**
-A: Không! Trang web hoạt động hoàn toàn offline sau khi mở.
+- ✅ Chrome 60+
+- ✅ Firefox 55+
+- ✅ Safari 12+
+- ✅ Edge 79+
+- ✅ Mobile browsers
 
-**Q: Làm sao backup dữ liệu?**
-A: Bạn có thể chụp màn hình hoặc copy nội dung ra file Word/Excel.
+## 🤝 Contributing
 
-**Q: Có thể dùng trên điện thoại không?**
-A: Có! Mở file `index.html` trên trình duyệt điện thoại là được.
+This is a personal project, but suggestions are welcome!
 
-## 📞 Hỗ trợ
+### Development Setup
+1. Fork the repository
+2. Make your changes
+3. Test thoroughly
+4. Submit a pull request
 
-Nếu gặp vấn đề:
-1. Thử làm mới trang (F5)
-2. Thử xóa cache trình duyệt
-3. Thử trình duyệt khác
+## 📄 License
 
-## 📝 Ghi chú
+This project is open source and available under the [MIT License](LICENSE).
 
-- File này hoạt động offline, không cần server
-- Mọi dữ liệu lưu local, bảo mật tuyệt đối
-- Không cần cài đặt gì thêm
-- Đơn giản, dễ dùng cho người không phải IT
+## 👨‍💻 Author
+
+**Lâm Quốc Minh**
+- Personal task management application
+- Built with modern web technologies
+- Focus on user experience and accessibility
+
+## 🆕 Recent Updates
+
+### Version 2.0 (Latest)
+- ✅ Added search functionality
+- ✅ Implemented keyboard shortcuts
+- ✅ Enhanced error handling
+- ✅ Added loading spinner
+- ✅ Improved accessibility
+- ✅ Added SEO optimization
+- ✅ Enhanced data validation
+- ✅ Added debug tools
+
+### Version 1.0
+- Basic task and goal management
+- Local storage implementation
+- Responsive design
+- Vietnamese language support
+
+## 📞 Support
+
+If you encounter any issues:
+1. Check the browser console (F12)
+2. Use the "🔍 Kiểm Tra Lưu Trữ" button
+3. Try refreshing the page
+4. Clear browser cache if needed
+
+## 🌟 Acknowledgments
+
+- Google Fonts for Montserrat
+- OpenStreetMap for location services
+- Modern web standards and APIs
+- Vietnamese web development community
 
 ---
 
-**Chúc bạn sử dụng hiệu quả! 🎉**
-
+**Made with ❤️ for personal productivity**

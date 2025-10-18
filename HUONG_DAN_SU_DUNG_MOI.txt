@@ -1,0 +1,111 @@
+╔══════════════════════════════════════════════════════╗
+║     HƯỚNG DẪN SỬ DỤNG TRANG QUẢN LÝ CÁ NHÂN         ║
+║              (PHIÊN BẢN CẢI TIẾN)                   ║
+╚══════════════════════════════════════════════════════╝
+
+📌 CÁCH MỞ TRANG WEB:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Tìm file "index.html" trong thư mục
+2. Nhấp đúp vào file đó
+3. Trang web sẽ tự động mở trong trình duyệt
+4. Hoặc kéo thả file vào trình duyệt Chrome/Edge/Firefox
+
+🎯 CÁC TÍNH NĂNG CHÍNH:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 1. QUẢN LÝ CÔNG VIỆC
+   - Nhập công việc → Nhấn "Thêm"
+   - 🔍 Tìm kiếm công việc theo tên, phân loại, trạng thái
+   - Nhấn "✓ Hoàn thành" khi làm xong
+   - Nhấn "🗑️ Xóa" để xóa công việc (có xác nhận)
+   - Cảnh báo deadline: màu cam (sắp hết hạn), đỏ (quá hạn)
+
+🎯 2. QUẢN LÝ MỤC TIÊU
+   - Nhập mục tiêu và các bước cần làm
+   - Theo dõi tiến độ hoàn thành
+   - Đính kèm link liên quan
+
+⚙️ 3. CÀI ĐẶT TÙY CHỈNH
+   - Thay đổi ảnh đại diện
+   - Thêm/xóa phân loại công việc
+   - Thêm/xóa trạng thái tiến độ
+
+⌨️ 4. PHÍM TẮT KEYBOARD:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Ctrl + N: Tạo công việc mới
+- Ctrl + S: Lưu dữ liệu
+- Ctrl + E: Xuất dữ liệu
+- Escape: Đóng modal
+- Phím 1, 2, 3: Chuyển tab
+
+💾 5. QUẢN LÝ DỮ LIỆU:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Tự động lưu vào localStorage của trình duyệt
+- Xuất dữ liệu ra file JSON
+- Nhập dữ liệu từ file JSON
+- 🔍 Kiểm tra trạng thái lưu trữ
+
+💡 LƯU Ý QUAN TRỌNG:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Mọi dữ liệu TỰ ĐỘNG LƯU trên máy tính của bạn
+✓ Không cần Internet sau khi mở lần đầu
+✓ Dữ liệu RIÊNG TƯ, chỉ bạn mới thấy
+✓ Có loading spinner khi khởi động
+✓ Có thông báo xác nhận trước khi xóa
+✓ Có search functionality để tìm kiếm
+✗ KHÔNG XÓA dữ liệu trình duyệt (sẽ mất hết thông tin)
+
+🔧 KHI GẶP LỖI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Nhấn F12 để mở Developer Tools
+2. Xem tab Console để kiểm tra lỗi
+3. Nhấn nút "🔍 Kiểm Tra Lưu Trữ" để debug
+4. Làm mới trang (nhấn F5)
+5. Thử trình duyệt khác (Chrome, Edge, Firefox)
+
+📱 DÙNG TRÊN ĐIỆN THOẠI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Chuyển thư mục vào điện thoại
+2. Mở file "index.html" bằng trình duyệt
+3. Sử dụng bình thường như trên máy tính
+4. Responsive design tự động điều chỉnh
+
+🎨 GIAO DIỆN MỚI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Màu xanh biển chuyên nghiệp (#005B96)
+- Font chữ UTM Avo (hoặc font backup)
+- Hiệu ứng gradient mượt mà
+- Loading spinner đẹp mắt
+- Favicon với logo "C"
+- SEO optimized
+- Accessibility friendly
+
+🚀 TÍNH NĂNG MỚI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Loading spinner khi khởi động
+✅ Search functionality
+✅ Keyboard shortcuts
+✅ Confirmation dialogs
+✅ Error handling tốt hơn
+✅ SEO meta tags
+✅ Accessibility improvements
+✅ Content Security Policy
+✅ Auto-save functionality
+
+📦 CẤU TRÚC FILE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+index.html                  → File chính, mở file này
+style.css                   → CSS riêng biệt (không dùng)
+script.js                   → JavaScript riêng biệt (không dùng)
+fonts.css                   → Cài đặt font chữ
+README.md                   → Hướng dẫn chi tiết
+HUONG_DAN_SU_DUNG.txt      → Hướng dẫn cũ
+HUONG_DAN_SU_DUNG_MOI.txt  → File này (hướng dẫn mới)
+HUONG_DAN_FONT_UTM_AVO.txt → Hướng dẫn cài font
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 CHÚC BẠN SỬ DỤNG VUI VẺ VÀ HIỆU QUẢ! 🎉
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 TIP: Nhấn F12 để mở Developer Tools và xem console log
+       để theo dõi trạng thái lưu trữ và debug nếu cần!
