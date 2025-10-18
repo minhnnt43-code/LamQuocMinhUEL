@@ -3,114 +3,1047 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Quản Lý Cá Nhân</title>
-    <link rel="stylesheet" href="fonts.css">
-    <link rel="stylesheet" href="style.css">
+    <title>Quản Lý Công Việc & Mục Tiêu</title>
+    
+    <!-- Tích hợp Fonts từ Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Toàn bộ CSS của trang web được đặt trong thẻ <style> này -->
+    <style>
+        /* --- BIẾN MÀU VÀ FONT CHỮ --- */
+        /* Việc dùng biến giúp dễ dàng thay đổi màu sắc toàn bộ trang web sau này */
+        :root {
+            --primary-blue: #005B96;
+            --primary-orange: #FF7A00;
+            --secondary-orange: #ff9d47;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #343a40;
+            --white: #ffffff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --font-title: 'Montserrat', sans-serif;
+            --font-body: 'UTM Avo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* --- THIẾT LẬP CƠ BẢN --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            transition: background-color 0.3s;
+        }
+
+        /* --- THANH ĐIỀU HƯỚNG BÊN TRÁI (SIDEBAR) --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 2rem 1rem;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+            flex-grow: 1; /* Đẩy phần sao lưu xuống dưới */
+        }
+
+        .nav-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-btn {
+            display: block;
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: none;
+            border: none;
+            color: var(--white);
+            text-align: left;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary-orange);
+            font-weight: bold;
+        }
+        
+        .backup-section button {
+            width: 100%;
+            margin-top: 0.5rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid var(--white);
+        }
+
+        .backup-btn {
+            background-color: var(--success-color);
+            color: var(--white);
+            border-color: var(--success-color);
+        }
+        .backup-btn:hover {
+            background-color: #218838;
+        }
+        
+        .restore-btn {
+            background-color: var(--warning-color);
+            color: var(--text-color);
+            border-color: var(--warning-color);
+        }
+        .restore-btn:hover {
+            background-color: #e0a800;
+        }
+
+        /* --- VÙNG NỘI DUNG CHÍNH --- */
+        .main-content {
+            margin-left: 260px; /* Bằng với chiều rộng sidebar */
+            width: calc(100% - 260px);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none; /* Mặc định ẩn tất cả các mục */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block; /* Chỉ hiện mục được chọn */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: var(--font-title);
+            color: var(--primary-blue);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--primary-orange);
+            padding-bottom: 0.5rem;
+        }
+
+        /* --- FORM NHẬP LIỆU --- */
+        .form-container {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.2);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .btn-submit {
+            grid-column: 1 / -1; /* Nút chiếm toàn bộ chiều rộng grid */
+            padding: 0.9rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            font-family: var(--font-title);
+            background-color: var(--primary-orange);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #e66a00;
+            transform: translateY(-2px);
+        }
+
+        /* --- DANH SÁCH HIỂN THỊ CÔNG VIỆC/MỤC TIÊU --- */
+        .list-container {
+            margin-top: 2rem;
+        }
+
+        .list-item {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            border-left: 5px solid var(--primary-blue);
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        
+        .list-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .item-header h3 {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            word-break: break-word; /* Chống vỡ layout khi tên quá dài */
+        }
+        
+        .item-header.completed h3 {
+            text-decoration: line-through;
+            color: var(--dark-gray);
+        }
+        
+        .item-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-detail span {
+            font-weight: bold;
+            color: var(--dark-gray);
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .item-detail p, .item-detail a {
+            word-break: break-all;
+        }
+        
+        .status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            color: var(--white);
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status.not-started { background-color: var(--dark-gray); }
+        .status.in-progress { background-color: var(--warning-color); color: var(--text-color); }
+        .status.completed { background-color: var(--success-color); }
+        
+        .item-actions button {
+            background: none;
+            border: 1px solid var(--medium-gray);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .item-actions .edit-btn:hover { background-color: var(--warning-color); border-color: var(--warning-color); color: var(--text-color); }
+        .item-actions .delete-btn:hover { background-color: var(--danger-color); border-color: var(--danger-color); color: var(--white); }
+        .item-actions .complete-btn:hover { background-color: var(--success-color); border-color: var(--success-color); color: var(--white); }
+
+        /* --- CÁC NÚT BỔ SUNG --- */
+        .export-report-btn {
+            display: none; /* Mặc định ẩn */
+            padding: 0.8rem 1.5rem;
+            background-color: #007bff;
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s;
+        }
+        .export-report-btn:hover {
+            background-color: #0069d9;
+        }
+        
+        /* --- MODAL CHỈNH SỬA --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+        }
+        
+        /* --- GIAO DIỆN TRÊN ĐIỆN THOẠI (RESPONSIVE) --- */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                align-items: center;
+                padding: 1rem;
+                flex-wrap: wrap; /* Cho phép các nút xuống hàng */
+            }
+            .sidebar-header {
+                width: 100%;
+                margin-bottom: 1rem;
+                font-size: 1.2rem;
+            }
+            .nav-menu {
+                display: flex;
+                flex-grow: 1;
+                margin-bottom: 0;
+            }
+            .backup-section {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr; /* 1 cột trên điện thoại */
+            }
+            .item-header, .item-body {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .item-actions {
+                margin-top: 1rem;
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <h1>🌟 Trang Quản Lý Cá Nhân</h1>
-            <p class="subtitle">Quản lý mọi thứ một cách dễ dàng</p>
+
+    <!-- PHẦN 1: THANH ĐIỀU HƯỚNG (SIDEBAR) -->
+    <aside class="sidebar">
+        <h2 class="sidebar-header">Bảng Điều Khiển</h2>
+        <ul class="nav-menu">
+            <li><button class="nav-btn active" onclick="showSection('tasks')">Quản lý công việc</button></li>
+            <li><button class="nav-btn" onclick="showSection('goals')">Quản lý mục tiêu</button></li>
+        </ul>
+        <div class="backup-section">
+            <button class="backup-btn" onclick="backupData()">Sao lưu dữ liệu</button>
+            <button class="restore-btn" onclick="document.getElementById('restore-input').click()">Phục hồi dữ liệu</button>
+            <!-- Input ẩn để chọn file phục hồi -->
+            <input type="file" id="restore-input" style="display: none;" accept=".json" onchange="restoreData(event)">
         </div>
-    </header>
+    </aside>
 
-    <!-- Navigation Menu -->
-    <nav class="main-nav">
-        <div class="container">
-            <button class="nav-btn active" onclick="showSection('work')">
-                📋 Quản Lý Công Việc
-            </button>
-            <button class="nav-btn" onclick="showSection('data')">
-                💾 Quản Lý Dữ Liệu
-            </button>
-            <button class="nav-btn" onclick="showSection('finance')">
-                💰 Quản Lý Tài Chính
-            </button>
-            <button class="nav-btn" onclick="showSection('achievement')">
-                🏆 Quản Lý Thành Tích
-            </button>
-        </div>
-    </nav>
+    <!-- PHẦN 2: NỘI DUNG CHÍNH -->
+    <main class="main-content">
 
-    <!-- Main Content -->
-    <main class="container">
-        
-        <!-- Quản Lý Công Việc -->
-        <section id="work" class="content-section active">
-            <h2>📋 Quản Lý Công Việc</h2>
-            <div class="input-group">
-                <input type="text" id="workInput" placeholder="Nhập công việc mới...">
-                <button onclick="addWork()" class="btn-primary">Thêm</button>
+        <!-- MỤC 2.1: QUẢN LÝ CÔNG VIỆC -->
+        <section id="tasks" class="content-section active">
+            <h1>Quản lý công việc</h1>
+            <div class="form-container">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="task-name">Tên công việc</label>
+                        <input type="text" id="task-name" placeholder="Ví dụ: Hoàn thành báo cáo tháng">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-timeframe">Thời hạn</label>
+                        <select id="task-timeframe">
+                            <option value="Ngày">Ngày</option>
+                            <option value="Tuần">Tuần</option>
+                            <option value="Tháng">Tháng</option>
+                            <option value="Quý">Quý</option>
+                            <option value="Năm">Năm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-status">Tiến độ</label>
+                        <select id="task-status">
+                            <option value="Chưa thực hiện">Chưa thực hiện</option>
+                            <option value="Đang thực hiện">Đang thực hiện</option>
+                            <option value="Đã hoàn thành">Đã hoàn thành</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-link">Link tài liệu</label>
+                        <input type="text" id="task-link" placeholder="https://...">
+                    </div>
+                </div>
+                <button class="btn-submit" onclick="addTask()">Thêm công việc</button>
             </div>
-            <ul id="workList" class="item-list"></ul>
-        </section>
-
-        <!-- Quản Lý Dữ Liệu -->
-        <section id="data" class="content-section">
-            <h2>💾 Quản Lý Dữ Liệu</h2>
-            <div class="input-group">
-                <input type="text" id="dataTitle" placeholder="Tiêu đề...">
-                <input type="text" id="dataContent" placeholder="Nội dung...">
-                <button onclick="addData()" class="btn-primary">Lưu Dữ Liệu</button>
-            </div>
-            <div id="dataList" class="card-list"></div>
-        </section>
-
-        <!-- Quản Lý Tài Chính -->
-        <section id="finance" class="content-section">
-            <h2>💰 Quản Lý Tài Chánh</h2>
             
-            <div class="finance-summary">
-                <div class="summary-card income">
-                    <h3>Thu Nhập</h3>
-                    <p class="amount" id="totalIncome">0 đ</p>
-                </div>
-                <div class="summary-card expense">
-                    <h3>Chi Tiêu</h3>
-                    <p class="amount" id="totalExpense">0 đ</p>
-                </div>
-                <div class="summary-card balance">
-                    <h3>Còn Lại</h3>
-                    <p class="amount" id="balance">0 đ</p>
-                </div>
+            <button class="export-report-btn" onclick="exportWeeklyReport()">Xuất Báo Cáo Tuần</button>
+            
+            <div class="list-container" id="task-list">
+                <!-- Danh sách công việc sẽ được hiển thị ở đây bằng JavaScript -->
             </div>
-
-            <div class="input-group">
-                <select id="financeType">
-                    <option value="income">Thu Nhập</option>
-                    <option value="expense">Chi Tiêu</option>
-                </select>
-                <input type="text" id="financeDesc" placeholder="Mô tả...">
-                <input type="number" id="financeAmount" placeholder="Số tiền...">
-                <button onclick="addFinance()" class="btn-primary">Thêm</button>
-            </div>
-            <ul id="financeList" class="item-list"></ul>
         </section>
 
-        <!-- Quản Lý Thành Tích -->
-        <section id="achievement" class="content-section">
-            <h2>🏆 Quản Lý Thành Tích</h2>
-            <div class="input-group">
-                <input type="text" id="achievementTitle" placeholder="Tên thành tích...">
-                <input type="date" id="achievementDate">
-                <input type="text" id="achievementDesc" placeholder="Mô tả...">
-                <button onclick="addAchievement()" class="btn-primary">Thêm Thành Tích</button>
+        <!-- MỤC 2.2: QUẢN LÝ MỤC TIÊU -->
+        <section id="goals" class="content-section">
+            <h1>Quản lý mục tiêu</h1>
+            <div class="form-container">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="goal-name">Mục tiêu</label>
+                        <input type="text" id="goal-name" placeholder="Ví dụ: Đọc xong 5 quyển sách kỹ năng">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="goal-conditions">Việc cần làm để đạt được</label>
+                        <textarea id="goal-conditions" placeholder="Gạch đầu dòng các việc cần làm..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="goal-link">Link đính kèm</label>
+                        <input type="text" id="goal-link" placeholder="https://...">
+                    </div>
+                </div>
+                <button class="btn-submit" onclick="addGoal()">Thêm mục tiêu</button>
             </div>
-            <div id="achievementList" class="card-list"></div>
+            <div class="list-container" id="goal-list">
+                <!-- Danh sách mục tiêu sẽ được hiển thị ở đây bằng JavaScript -->
+            </div>
         </section>
-
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>© 2025 - Trang Quản Lý Cá Nhân | Làm với ❤️</p>
+    <!-- PHẦN 3: MODAL DÙNG ĐỂ CHỈNH SỬA CÔNG VIỆC/MỤC TIÊU -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Chỉnh sửa</h2>
+            <div id="edit-modal-body">
+                <!-- Nội dung form chỉnh sửa sẽ được chèn vào đây -->
+            </div>
         </div>
-    </footer>
+    </div>
 
-    <script src="script.js"></script>
+
+    <!-- PHẦN 4: TOÀN BỘ JAVASCRIPT CỦA TRANG WEB -->
+    <script>
+        // --- KHAI BÁO BIẾN TOÀN CỤC ---
+        // 'tasks' và 'goals' là 2 mảng chính chứa toàn bộ dữ liệu của ứng dụng
+        let tasks = [];
+        let goals = [];
+        // 'editingItemId' dùng để lưu ID của mục đang được chỉnh sửa
+        let editingItemId = null;
+
+        // --- CÁC HÀM QUẢN LÝ GIAO DIỆN (UI) ---
+
+        /**
+         * Hàm này được dùng để chuyển đổi giữa các mục (công việc, mục tiêu).
+         * @param {string} sectionName - Tên của mục cần hiển thị ('tasks' hoặc 'goals').
+         */
+        function showSection(sectionName) {
+            // 1. Ẩn tất cả các section
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 2. Xóa trạng thái 'active' khỏi tất cả các nút điều hướng
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 3. Hiển thị section được yêu cầu
+            document.getElementById(sectionName).classList.add('active');
+
+            // 4. Thêm trạng thái 'active' cho nút tương ứng
+            // Sử dụng event.target để lấy chính xác nút đã được click
+            event.target.classList.add('active');
+        }
+        
+        // --- CÁC HÀM XỬ LÝ DỮ LIỆU (LƯU, TẢI, SAO LƯU, PHỤC HỒI) ---
+
+        /**
+         * Lưu toàn bộ dữ liệu (tasks và goals) vào Local Storage của trình duyệt.
+         * Dữ liệu được chuyển thành chuỗi JSON trước khi lưu.
+         */
+        function saveData() {
+            const appData = { tasks: tasks, goals: goals };
+            localStorage.setItem('personalManagerData', JSON.stringify(appData));
+            // Sau mỗi lần lưu, kiểm tra xem có nên hiển thị nút xuất báo cáo không
+            checkAndDisplayExportButton();
+        }
+
+        /**
+         * Tải dữ liệu từ Local Storage khi trang web được mở.
+         * Nếu có dữ liệu, chuyển từ chuỗi JSON về lại object và gán vào biến.
+         */
+        function loadData() {
+            const savedData = localStorage.getItem('personalManagerData');
+            if (savedData) {
+                const appData = JSON.parse(savedData);
+                tasks = appData.tasks || [];
+                goals = appData.goals || [];
+            }
+        }
+
+        /**
+         * Sao lưu toàn bộ dữ liệu hiện tại thành một file .json và cho phép người dùng tải về.
+         */
+        function backupData() {
+            const appData = { tasks: tasks, goals: goals };
+            const dataStr = JSON.stringify(appData, null, 2); // null, 2 để format JSON cho đẹp
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            const date = new Date().toISOString().slice(0, 10); // Lấy ngày hiện tại YYYY-MM-DD
+            link.download = `backup-quanly-congviec-${date}.json`;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        /**
+         * Phục hồi dữ liệu từ một file .json do người dùng chọn.
+         * @param {Event} event - Sự kiện 'change' từ input file.
+         */
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const restoredData = JSON.parse(e.target.result);
+                    // Kiểm tra xem file có đúng cấu trúc không
+                    if (restoredData && Array.isArray(restoredData.tasks) && Array.isArray(restoredData.goals)) {
+                        tasks = restoredData.tasks;
+                        goals = restoredData.goals;
+                        saveData();
+                        renderAll(); // Vẽ lại toàn bộ giao diện
+                        alert('Phục hồi dữ liệu thành công!');
+                    } else {
+                        alert('Lỗi: File không đúng định dạng.');
+                    }
+                } catch (error) {
+                    alert('Lỗi: Không thể đọc file. File có thể bị lỗi.');
+                    console.error("Lỗi khi phục hồi:", error);
+                }
+            };
+            reader.readAsText(file);
+            // Reset input để có thể chọn lại cùng một file
+            event.target.value = '';
+        }
+
+        // --- CÁC HÀM LIÊN QUAN ĐẾN QUẢN LÝ CÔNG VIỆC ---
+        
+        /**
+         * Thêm một công việc mới vào danh sách.
+         */
+        function addTask() {
+            // Lấy giá trị từ các ô input
+            const name = document.getElementById('task-name').value.trim();
+            const timeframe = document.getElementById('task-timeframe').value;
+            const status = document.getElementById('task-status').value;
+            const link = document.getElementById('task-link').value.trim();
+
+            if (!name) {
+                alert('Vui lòng nhập tên công việc.');
+                return;
+            }
+
+            const newTask = {
+                id: Date.now(), // Dùng timestamp làm ID duy nhất
+                name,
+                timeframe,
+                status,
+                link
+            };
+
+            tasks.push(newTask);
+            saveData();
+            renderTasks();
+            
+            // Xóa nội dung trong form sau khi thêm
+            document.getElementById('task-name').value = '';
+            document.getElementById('task-link').value = '';
+        }
+
+        /**
+         * Xóa một công việc khỏi danh sách dựa vào ID.
+         * @param {number} id - ID của công việc cần xóa.
+         */
+        function deleteTask(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa công việc này?')) {
+                tasks = tasks.filter(task => task.id !== id);
+                saveData();
+                renderTasks();
+            }
+        }
+        
+        /**
+         * Đánh dấu hoàn thành cho một công việc.
+         * @param {number} id - ID của công việc.
+         */
+        function completeTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.status = 'Đã hoàn thành';
+                saveData();
+                renderTasks();
+            }
+        }
+
+        /**
+         * Hiển thị danh sách công việc ra màn hình.
+         */
+        function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = ''; // Xóa danh sách cũ
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có công việc nào.</p>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                // Tạo một thẻ div cho mỗi công việc
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                
+                // Gán màu cho trạng thái
+                let statusClass = '';
+                if (task.status === 'Chưa thực hiện') statusClass = 'not-started';
+                else if (task.status === 'Đang thực hiện') statusClass = 'in-progress';
+                else if (task.status === 'Đã hoàn thành') statusClass = 'completed';
+
+                // Dùng `` (template literals) để tạo HTML dễ dàng hơn
+                item.innerHTML = `
+                    <div class="item-header ${task.status === 'Đã hoàn thành' ? 'completed' : ''}">
+                        <h3>${task.name}</h3>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="openEditModal('task', ${task.id})">Sửa</button>
+                            <button class="delete-btn" onclick="deleteTask(${task.id})">Xóa</button>
+                            ${task.status !== 'Đã hoàn thành' ? `<button class="complete-btn" onclick="completeTask(${task.id})">Hoàn thành</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="item-body">
+                        <div class="item-detail">
+                            <span>Thời hạn</span>
+                            <p>${task.timeframe}</p>
+                        </div>
+                        <div class="item-detail">
+                            <span>Tiến độ</span>
+                            <p><span class="status ${statusClass}">${task.status}</span></p>
+                        </div>
+                        <div class="item-detail">
+                            <span>Tài liệu</span>
+                            <p>${task.link ? `<a href="${task.link}" target="_blank">${task.link}</a>` : 'Không có'}</p>
+                        </div>
+                    </div>
+                `;
+                taskList.appendChild(item);
+            });
+        }
+        
+        // --- CÁC HÀM LIÊN QUAN ĐẾN XUẤT BÁO CÁO ---
+        
+        /**
+         * Lấy số tuần trong năm từ một ngày.
+         * @param {Date} d - Đối tượng Date.
+         * @returns {number} - Số tuần.
+         */
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+            return weekNo;
+        }
+        
+        /**
+         * Kiểm tra xem tất cả công việc của tuần hiện tại đã hoàn thành chưa.
+         * Nếu có, hiển thị nút "Xuất Báo Cáo Tuần".
+         */
+        function checkAndDisplayExportButton() {
+            const exportBtn = document.querySelector('.export-report-btn');
+            const currentWeek = getWeekNumber(new Date());
+            const currentYear = new Date().getFullYear();
+
+            // Lọc ra các công việc thuộc tuần này
+            const weeklyTasks = tasks.filter(task => {
+                // Giả sử công việc "Tuần" được tạo trong tuần đó
+                // Logic này có thể cần phức tạp hơn nếu muốn quản lý ngày tạo
+                return task.timeframe === 'Tuần';
+            });
+            
+            if (weeklyTasks.length > 0 && weeklyTasks.every(task => task.status === 'Đã hoàn thành')) {
+                exportBtn.style.display = 'block';
+            } else {
+                exportBtn.style.display = 'none';
+            }
+        }
+        
+        /**
+         * Xuất các công việc đã hoàn thành trong tuần ra file .csv.
+         */
+        function exportWeeklyReport() {
+            const weeklyTasksCompleted = tasks.filter(task => task.timeframe === 'Tuần' && task.status === 'Đã hoàn thành');
+
+            if (weeklyTasksCompleted.length === 0) {
+                alert("Không có công việc tuần nào đã hoàn thành để xuất báo cáo.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Tên Công Việc,Tiến Độ,Link Tài Liệu\r\n"; // Header của file CSV
+
+            weeklyTasksCompleted.forEach(task => {
+                let row = `"${task.name}","${task.status}","${task.link}"`;
+                csvContent += row + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            const date = new Date().toISOString().slice(0, 10);
+            link.setAttribute("download", `bao-cao-tuan-${date}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- CÁC HÀM LIÊN QUAN ĐẾN QUẢN LÝ MỤC TIÊU ---
+
+        /**
+         * Thêm một mục tiêu mới.
+         */
+        function addGoal() {
+            const name = document.getElementById('goal-name').value.trim();
+            const conditions = document.getElementById('goal-conditions').value.trim();
+            const link = document.getElementById('goal-link').value.trim();
+            
+            if (!name) {
+                alert('Vui lòng nhập tên mục tiêu.');
+                return;
+            }
+
+            const newGoal = {
+                id: Date.now(),
+                name,
+                conditions,
+                link,
+                completed: false
+            };
+
+            goals.push(newGoal);
+            saveData();
+            renderGoals();
+            
+            document.getElementById('goal-name').value = '';
+            document.getElementById('goal-conditions').value = '';
+            document.getElementById('goal-link').value = '';
+        }
+
+        /**
+         * Xóa một mục tiêu.
+         * @param {number} id - ID của mục tiêu cần xóa.
+         */
+        function deleteGoal(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa mục tiêu này?')) {
+                goals = goals.filter(goal => goal.id !== id);
+                saveData();
+                renderGoals();
+            }
+        }
+
+        /**
+         * Chuyển đổi trạng thái hoàn thành của mục tiêu.
+         * @param {number} id - ID của mục tiêu.
+         */
+        function toggleGoalCompletion(id) {
+            const goal = goals.find(g => g.id === id);
+            if (goal) {
+                goal.completed = !goal.completed;
+                saveData();
+                renderGoals();
+            }
+        }
+
+        /**
+         * Hiển thị danh sách mục tiêu ra màn hình.
+         */
+        function renderGoals() {
+            const goalList = document.getElementById('goal-list');
+            goalList.innerHTML = '';
+
+            if (goals.length === 0) {
+                goalList.innerHTML = '<p style="text-align: center; color: var(--dark-gray);">Chưa có mục tiêu nào.</p>';
+                return;
+            }
+
+            goals.forEach(goal => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div class="item-header ${goal.completed ? 'completed' : ''}">
+                        <h3>${goal.name}</h3>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="openEditModal('goal', ${goal.id})">Sửa</button>
+                            <button class="delete-btn" onclick="deleteGoal(${goal.id})">Xóa</button>
+                            <button class="complete-btn" onclick="toggleGoalCompletion(${goal.id})">
+                                ${goal.completed ? 'Đánh dấu chưa xong' : 'Đánh dấu hoàn thành'}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-body" style="grid-template-columns: 1fr;">
+                        <div class="item-detail">
+                            <span>Việc cần làm</span>
+                            <p style="white-space: pre-wrap;">${goal.conditions || 'Không có'}</p>
+                        </div>
+                        <div class="item-detail">
+                            <span>Link đính kèm</span>
+                            <p>${goal.link ? `<a href="${goal.link}" target="_blank">${goal.link}</a>` : 'Không có'}</p>
+                        </div>
+                    </div>
+                `;
+                goalList.appendChild(item);
+            });
+        }
+        
+        // --- CÁC HÀM XỬ LÝ MODAL CHỈNH SỬA ---
+
+        /**
+         * Mở modal và hiển thị form chỉnh sửa cho công việc hoặc mục tiêu.
+         * @param {string} type - Loại cần sửa ('task' hoặc 'goal').
+         * @param {number} id - ID của mục cần sửa.
+         */
+        function openEditModal(type, id) {
+            editingItemId = id;
+            const modal = document.getElementById('edit-modal');
+            const modalBody = document.getElementById('edit-modal-body');
+            modalBody.innerHTML = ''; // Xóa nội dung cũ
+
+            if (type === 'task') {
+                const task = tasks.find(t => t.id === id);
+                modalBody.innerHTML = `
+                    <div class="form-group">
+                        <label for="edit-task-name">Tên công việc</label>
+                        <input type="text" id="edit-task-name" value="${task.name}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-task-timeframe">Thời hạn</label>
+                        <select id="edit-task-timeframe">
+                            <option value="Ngày" ${task.timeframe === 'Ngày' ? 'selected' : ''}>Ngày</option>
+                            <option value="Tuần" ${task.timeframe === 'Tuần' ? 'selected' : ''}>Tuần</option>
+                            <option value="Tháng" ${task.timeframe === 'Tháng' ? 'selected' : ''}>Tháng</option>
+                            <option value="Quý" ${task.timeframe === 'Quý' ? 'selected' : ''}>Quý</option>
+                            <option value="Năm" ${task.timeframe === 'Năm' ? 'selected' : ''}>Năm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-task-status">Tiến độ</label>
+                        <select id="edit-task-status">
+                            <option value="Chưa thực hiện" ${task.status === 'Chưa thực hiện' ? 'selected' : ''}>Chưa thực hiện</option>
+                            <option value="Đang thực hiện" ${task.status === 'Đang thực hiện' ? 'selected' : ''}>Đang thực hiện</option>
+                            <option value="Đã hoàn thành" ${task.status === 'Đã hoàn thành' ? 'selected' : ''}>Đã hoàn thành</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-task-link">Link tài liệu</label>
+                        <input type="text" id="edit-task-link" value="${task.link}">
+                    </div>
+                    <button class="btn-submit" onclick="saveTaskChanges()">Lưu thay đổi</button>
+                `;
+            } else if (type === 'goal') {
+                const goal = goals.find(g => g.id === id);
+                modalBody.innerHTML = `
+                    <div class="form-group">
+                        <label for="edit-goal-name">Mục tiêu</label>
+                        <input type="text" id="edit-goal-name" value="${goal.name}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-goal-conditions">Việc cần làm</label>
+                        <textarea id="edit-goal-conditions">${goal.conditions}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-goal-link">Link đính kèm</label>
+                        <input type="text" id="edit-goal-link" value="${goal.link}">
+                    </div>
+                    <button class="btn-submit" onclick="saveGoalChanges()">Lưu thay đổi</button>
+                `;
+            }
+
+            modal.style.display = 'block';
+        }
+
+        /**
+         * Đóng modal chỉnh sửa.
+         */
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+            editingItemId = null; // Reset ID đang sửa
+        }
+
+        /**
+         * Lưu các thay đổi của công việc sau khi sửa.
+         */
+        function saveTaskChanges() {
+            const task = tasks.find(t => t.id === editingItemId);
+            if (task) {
+                task.name = document.getElementById('edit-task-name').value.trim();
+                task.timeframe = document.getElementById('edit-task-timeframe').value;
+                task.status = document.getElementById('edit-task-status').value;
+                task.link = document.getElementById('edit-task-link').value.trim();
+                saveData();
+                renderTasks();
+                closeModal();
+            }
+        }
+
+        /**
+         * Lưu các thay đổi của mục tiêu sau khi sửa.
+         */
+        function saveGoalChanges() {
+            const goal = goals.find(g => g.id === editingItemId);
+            if (goal) {
+                goal.name = document.getElementById('edit-goal-name').value.trim();
+                goal.conditions = document.getElementById('edit-goal-conditions').value.trim();
+                goal.link = document.getElementById('edit-goal-link').value.trim();
+                saveData();
+                renderGoals();
+                closeModal();
+            }
+        }
+        
+        /**
+         * Hàm tổng hợp để vẽ lại toàn bộ giao diện.
+         */
+        function renderAll() {
+            renderTasks();
+            renderGoals();
+        }
+
+        // --- KHỞI CHẠY ỨNG DỤNG ---
+        // Sự kiện này đảm bảo code chỉ chạy sau khi toàn bộ trang web đã tải xong
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData(); // Tải dữ liệu đã lưu
+            renderAll(); // Vẽ giao diện lần đầu
+        });
+        
+        // Đóng modal nếu người dùng click ra ngoài vùng nội dung
+        window.onclick = function(event) {
+            const modal = document.getElementById('edit-modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+    </script>
 </body>
 </html>
-
